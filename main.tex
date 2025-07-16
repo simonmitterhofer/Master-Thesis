@@ -1,0 +1,81 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[left=3cm,right=2.5cm,top=3cm,bottom=3cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman,english]{babel}
+\usepackage{setspace}
+\usepackage{titling}
+\usepackage{parskip}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault} % Use sans-serif
+\usepackage{graphicx}
+\usepackage{xcolor}
+\setlength{\droptitle}{-5em}
+\onehalfspacing
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage[toc,page]{appendix}
+\usepackage[round]{natbib}
+
+
+\begin{document}
+\newgeometry{a4paper,left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\thispagestyle{empty}
+\begin{figure}[h!]
+    \raggedleft
+    \includegraphics[scale=1]{figures/WULogo.png}
+\end{figure}
+
+
+\begin{center}
+    \textbf{\huge MASTER’S THESIS} \\
+    \vspace{1.5cm}
+
+    \LARGE Option Pricing in the Hypergeometric Volatility Model \\
+    \vspace{2.5cm}
+    
+    \normalsize submitted by \\
+    \vspace{0.5cm}
+    
+    \textit{\Large Simon Mitterhofer BSc}
+    \vspace{2cm}
+    
+    intended degree: \\
+    \Large Master of Science (WU) / MSc (WU)
+        \\
+\vspace{1cm}
+\normalsize
+
+    \begin{tabular}{ll}
+        Student ID number: & 11910595 \\
+        Degree programme: & Quantitative Finance \\
+        Supervisor: & Univ.Prof. Dr. Rüdiger Frey \\
+    \end{tabular}
+    \vspace{2cm}
+    
+    \textbf{Vienna, July 2025}
+\end{center}
+
+\newpage
+
+\include{sections/section0_abstract}
+\tableofcontents
+\include{sections/section1_introduction}
+\include{sections/section2_literature_review}
+%\addtocounter{section}{2}
+\include{sections/section3_modeling_framework}
+\include{sections/section4_simulation_methodology}
+\include{sections/section5_results_analysis}
+\include{sections/section6_calibration}
+\include{sections/section7_conclusion}
+
+\appendix
+%\include{sections_appendix/sectionA_figures}
+\include{sections_appendix/sectionB_references}
+
+
+\end{document}
