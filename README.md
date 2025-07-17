@@ -1,8 +1,8 @@
 # Option Pricing in the Hypergeometric Volatility Model
 
 This repository contains all files related to my Master’s thesis titled  
-**"Option Pricing in the Hypergeometric Volatility Model – Simulation and Analysis"**  
-submitted at WU Vienna, Institute for Statistics and Mathematics, in 2025.
+**"Option Pricing in the Hypergeometric Volatility Model"**  
+%submitted at WU Vienna, Institute for Statistics and Mathematics, in 2025.
 
 ## Overview
 
