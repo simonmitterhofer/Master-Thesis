@@ -32,7 +32,16 @@ strikes_maturities <- setup_strikes_maturities(config)
 cat("Configuration:\n")
 cat("- Scenarios:", length(scenarios), "\n")
 cat("- Paths per scenario:", config$simulation$num_paths, "\n")
-cat("- Time horizon:", config$simulation$TN, "years\n")
+cat("- Time horizon:", config$simulation$TN, "years\n\n")
+
+est_runtime <- ceiling(length(scenarios) / n_cores) * config$simulation$num_paths * config$simulation$TN / 800000
+if (est_runtime < 1) {
+  cat("Estimated runtime:", round(est_runtime * 60), "minutes.\n\n")
+} else if (est_runtime < 24) {
+  cat("Estimated runtime:", round(est_runtime), "hour(s).\n\n")
+} else {
+  cat("Estimated runtime:", est_runtime %/% 24, "day(s) and", est_runtime %% 24, "hour(s).\n\n")
+}
 
 # Function to run scenarios in parallel
 run_cluster_scenarios <- function(scenarios_list, config, strikes_maturities, n_cores) {

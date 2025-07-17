@@ -29,22 +29,14 @@ create_scenarios <- function() {
   scenarios <- list()
   
   # Simulation scenarios with parameters J, H, gamma2, rho, a
-  scenarios <- expand.grid(
-    a = 1,
-    b = c(0.2, 0.25),
-    r = c(0.02, 0.03),
-    rho = -0.4,
-    gamma2 = 0.3,
-    H = c(0.1, 0.49),
-    J = 20,
-    
-    # a = c(0.5, 0.7, 1, 1.4),  # Volatility scale parameter
-    # b = c(0.2, 0.3),  # Volatility level parameter
-    # r = c(0.02, 0.03, 0.04),  # Risk-free rate
-    # rho = c(-0.5, -0.4, -0.3, -0.2),  # Correlation
-    # gamma2 = c(0.10, 0.20, 0.30, 0.40),  # Persistence
-    # H = c(0.05, 0.10, 0.15, 0.20, 0.25, 0.30),  # Hurst parameter
-    # J = c(10, 20, 30, 40, 50),  # Dimension of OU approximation
+  scenarios <- expand.grid(    
+    a = c(0.8, 1.0, 1.2),  # Volatility scale parameter
+    b = c(0.15, 0.20, 0.25),  # Volatility level parameter
+    r = c(0.02, 0.03, 0.04),  # Risk-free rate
+    rho = c(-0.5, -0.4, -0.3, -0.2, -0.1, 0),  # Correlation
+    gamma2 = c(0.10, 0.20, 0.30, 0.40),  # Persistence
+    H = c(0.10, 0.20, 0.30, 0.40),  # Hurst parameter
+    J = c(10, 20, 50),  # Dimension of OU approximation
     stringsAsFactors = FALSE
   )
   
@@ -56,8 +48,7 @@ create_scenarios <- function() {
   
   # Convert to list of scenarios
   scenarios <- lapply(seq(nrow(scenarios)), function(i) scenarios[i,])
-  scenarios <- scenarios[1:8]
-  
+
   return(scenarios)
 }
 

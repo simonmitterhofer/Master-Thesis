@@ -10,7 +10,7 @@ source("utils/plotting.R")
 source("utils/data_management.R")
 
 # Load results
-data_dir <- "SimulationData"
+data_dir <- "SimulationData_2025-07-16"
 output_dir <- "Analysis"
 
 results <- load_simulation_results(data_dir)
