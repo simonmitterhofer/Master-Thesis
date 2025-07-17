@@ -42,7 +42,7 @@ save_plot_vol_surface <- function(iv_matrix, scenario, config,
                       "_iv_surface.png")
   }
   if ( filename == "rev" ) {
-    filename = paste0("iv_surface_S", rownames(scenario), "_",
+    filename = paste0("iv_surf_S", rownames(scenario), "_",
                       paste(names(scenario), round(scenario, 2), sep = "=", collapse = "_"),
                       ".png")
   }
@@ -84,7 +84,7 @@ save_plot_atm_skew <- function(iv_matrix, scenario, config,
                       "_atm_skew.png")
   }
   if ( filename == "rev" ) {
-    filename = paste0("atm_skew_S", rownames(scenario), "_",
+    filename = paste0("skew_S", rownames(scenario), "_",
                       paste(names(scenario), round(scenario, 2), sep = "=", collapse = "_"),
                       ".png")
   }
@@ -105,7 +105,7 @@ save_plot_log_atm_skew <- function(iv_matrix, scenario, config,
                       "_atm_skew_log.png")
   }
   if ( filename == "rev" ) {
-    filename = paste0("atm_skew_log_S", rownames(scenario), "_",
+    filename = paste0("skew_log_S", rownames(scenario), "_",
                       paste(names(scenario), round(scenario, 2), sep = "=", collapse = "_"),
                       ".png")
   }
