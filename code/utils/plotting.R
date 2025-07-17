@@ -20,7 +20,7 @@ plot_vol_surface <- function(iv_matrix, scenario, config) {
         xlab = "Log-Moneyness",
         ylab = "Time to Maturity",
         zlab = "Implied Volatility",
-        zlim = c(0.2, 0.6),
+        zlim = c(0, 0.6),
         ticktype = "detailed",
         main = paste("Implied Volatility Surface", 
                      paste0(names(scenario), sep = " = ", 

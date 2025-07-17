@@ -2,6 +2,7 @@
 # Data saving and loading utilities
 
 source("utils/plotting.R")
+source("utils/filtering.R")
 
 # Ensure output directory exists
 ensure_output_dir <- function(config) {
@@ -160,7 +161,7 @@ save_filtered_scenarios <- function(results, analysis_df,
 
 # Save plots for ceteris paribus parameter analysis
 create_parameter_analysis <- function(variable_pars, results, analysis_df, summary_df,
-                                      output_dir = "Analysis_parameter") {
+                                      output_dir = "Analysis") {
   
   params = c("H", "gamma1", "gamma2", "rho", "a", "b", "r", "J")
   
@@ -171,7 +172,7 @@ create_parameter_analysis <- function(variable_pars, results, analysis_df, summa
   fixed_pars <- setdiff(params, variable_pars)
   variable_pars <- setdiff(params, fixed_pars)
   
-  if (length(variable_pars) > 1) output_dir = "Analysis_parameters"
+  if (length(variable_pars) > 1) output_dir = "Analysis"
   output_dir <- paste(output_dir, "_", paste(variable_pars, collapse = "_"), sep = "")
   if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
   
