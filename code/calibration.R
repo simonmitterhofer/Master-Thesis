@@ -1,27 +1,32 @@
-# calibration/calibration.R
+# calibration.R
 # Implied volatility surface calibration
+
+
+### Load Files and Packages -----------------------------------------------
 
 # Source files
 source("models/implied_volatility.R")
 source("utils/filtering.R")
-# source("utils/plotting.R")
+source("utils/plotting.R")
 source("utils/data_management.R")
+readRenviron(".Renviron")
 
 # Load required packages
 library(DBI)
 library(RPostgreSQL)
-library(dplyr)
-library(akima)
-library(plotly)
-#library(ggplot2)
+# library(dplyr)
+# library(akima)
+# library(plotly)
+
+
+### Get Data From WRDS ----------------------------------------------------
 
 # WRDS connection setup
-# You'll need to modify these connection details for your WRDS account
 wrds_host <- "wrds-pgdata.wharton.upenn.edu"
 wrds_port <- 9737
 wrds_dbname <- "wrds"
-wrds_user <- username  # Replace with your WRDS username
-wrds_password <- password  # Replace with your WRDS password
+wrds_user <- Sys.getenv("WRDS_USER")
+wrds_password <- Sys.getenv("WRDS_PASSWORD")
 
 # Connect to WRDS
 con <- dbConnect(PostgreSQL(),
@@ -30,10 +35,6 @@ con <- dbConnect(PostgreSQL(),
                  dbname = wrds_dbname,
                  user = wrds_user,
                  password = wrds_password)
-
-# Define date range (all March 1999)
-# start_date <- "1999-03-01"
-# end_date   <- "1999-03-31"
 
 # Define date range (February 15, 2023)
 start_date <- "2023-02-15"
@@ -80,12 +81,11 @@ options_data <- merge(
   all.x = TRUE
 )
 
-original_data <- options_data
-
 # Close connection
 dbDisconnect(con)
 
-options_data <- original_data
+
+### Process Data ----------------------------------------------------------
 
 # Ensure correct data types
 options_data$days_to_expiry <- as.numeric(options_data$days_to_expiry)
