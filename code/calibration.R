@@ -20,8 +20,8 @@ library(plotly)
 wrds_host <- "wrds-pgdata.wharton.upenn.edu"
 wrds_port <- 9737
 wrds_dbname <- "wrds"
-wrds_user <- "mitterhofer"  # Replace with your WRDS username
-wrds_password <- "BE@De0rjC4XZ-MNJ"  # Replace with your WRDS password
+wrds_user <- username  # Replace with your WRDS username
+wrds_password <- password  # Replace with your WRDS password
 
 # Connect to WRDS
 con <- dbConnect(PostgreSQL(),
