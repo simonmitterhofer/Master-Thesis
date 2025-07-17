@@ -2,7 +2,7 @@
 
 This repository contains all files related to my Master’s thesis titled  
 **"Option Pricing in the Hypergeometric Volatility Model"**  
-#submitted at WU Vienna, Institute for Statistics and Mathematics, in 2025.
+<!-- submitted at WU Vienna, Institute for Statistics and Mathematics, in 2025. -->
 
 ## Overview
 
