@@ -61,7 +61,7 @@ simulate_ou_processes <- function(N, J, k, dWV, dt) {
 compute_rough_volatility <- function(Z, c, k, a, b) {
   ltVar <- sum(outer(c, c, "*") / outer(k, k, "+"))
   WrV <- c(Z %*% c) / sqrt(ltVar)
-  crV <- b * exp(a * WrV)
+  crV <- b * exp(a * WrV - 0.5 * a^2)
   
   return( crV )
 }
