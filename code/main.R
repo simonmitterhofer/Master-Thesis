@@ -22,7 +22,7 @@ cat("Using", n_cores, "cores\n")
 
 # Create config - enhanced for cluster
 config <- create_config()
-config$simulation$num_paths <- 50000  # Adapt simulation paths
+config$simulation$num_paths <- 100000  # Adapt simulation paths
 config$output$progress <- TRUE  # Adapt progress output
 
 # Create scenarios and strikes/maturities
@@ -34,7 +34,7 @@ cat("- Scenarios:", length(scenarios), "\n")
 cat("- Paths per scenario:", config$simulation$num_paths, "\n")
 cat("- Time horizon:", config$simulation$TN, "years\n\n")
 
-est_runtime <- ceiling(length(scenarios) / n_cores) * config$simulation$num_paths * config$simulation$TN / 800000
+est_runtime <- ceiling(length(scenarios) / n_cores) * config$simulation$num_paths * config$simulation$TN / 600000
 if (est_runtime < 1) {
   cat("Estimated runtime:", round(est_runtime * 60), "minutes.\n\n")
 } else if (est_runtime < 24) {
@@ -52,10 +52,10 @@ run_cluster_scenarios <- function(scenarios_list, config, strikes_maturities, n_
     return(NULL)
   }
   
-  cat("Processing", n_scenarios, "scenarios with", min(n_cores-1, n_scenarios, 32), "cores\n")
+  cat("Processing", n_scenarios, "scenarios with", min(n_cores-1, n_scenarios, 64), "cores\n")
   
   # Setup parallel cluster
-  cl <- makeCluster(min(n_cores-1, n_scenarios, 32))
+  cl <- makeCluster(min(n_cores-1, n_scenarios, 64))
   
   tryCatch({
     # Load functions on workers

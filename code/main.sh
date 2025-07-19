@@ -5,7 +5,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=64
 #SBATCH --mem=32G
-#SBATCH --time=96:00:00
+#SBATCH --time=120:00:00
 #SBATCH --partition=compute  # Adjust based on your cluster
 
 echo "=== Rough Volatility Simulation ==="
