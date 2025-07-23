@@ -35,6 +35,9 @@ download_sp500_market_data <- function(start_date, end_date) {
   # WRDS connection
   readRenviron(".Renviron")
   
+  cat(Sys.getenv("WRDS_USER"), "\n")
+  cat(Sys.getenv("WRDS_PASSWORD"), "\n")
+  
   con <- dbConnect(PostgreSQL(),
                    host = "wrds-pgdata.wharton.upenn.edu",
                    port = 9737,
@@ -87,7 +90,7 @@ process_market_data <- function(options_data, config) {
   options_data_clean <- options_data %>%
     filter(
       impl_volatility > 0.05,
-      impl_volatility <= 0.8,
+      impl_volatility <= 0.7,
       log_moneyness > -1.5,
       log_moneyness <= 1.5,
       maturity >= 0,
@@ -98,8 +101,8 @@ process_market_data <- function(options_data, config) {
   # Binning and averaging
   options_data_clean <- options_data_clean %>%
     mutate(
-      log_moneyness_bin = cut(log_moneyness, breaks = seq(-1.5, 1.5, by=0.02)),
-      maturity_bin = cut(maturity, breaks = seq(0, 2, by=0.02))
+      log_moneyness_bin = cut(log_moneyness, breaks = seq(-1.5, 1.5, by=0.04)),
+      maturity_bin = cut(maturity, breaks = seq(0, 2, by=0.03))
     )
   
   iv_summary <- options_data_clean %>%

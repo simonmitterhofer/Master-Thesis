@@ -13,6 +13,8 @@ plot_vol_surface <- function(iv_matrix, scenario, config) {
   title_sub = paste0(names(scenario), sep = " = ", scenario, collapse = ", ")
   if (is.null(scenario)) title_sub = "Market"
   
+  par(mfrow = c(1,1))
+  
   persp(log(moneyness), maturities, t(iv_matrix),
         theta = 40, phi = 20,
         expand = 0.5,
@@ -23,7 +25,7 @@ plot_vol_surface <- function(iv_matrix, scenario, config) {
         xlab = "Log-Moneyness",
         ylab = "Time to Maturity",
         zlab = "Implied Volatility",
-        zlim = c(0, 0.6),
+        zlim = c(0, 0.7),
         ticktype = "detailed",
         main = paste("Implied Volatility Surface", title_sub, sep = "\n"),
         cex.main = 1.2,
@@ -71,6 +73,8 @@ plot_atm_skew <- function(iv_matrix, scenario, config) {
   title_sub = paste0(names(scenario), sep = " = ", scenario, collapse = ", ")
   if (is.null(scenario)) title_sub = "Market"
   
+  par(mfrow = c(1,1))
+  
   plot(maturities, atm_skew, 
        main = paste('Term Structure of ATM-Skew', title_sub, sep = "\n"), 
        xlab = 'Time to Maturity', ylab = 'ATM-Skew', ylim = c(-1, 0),
@@ -87,6 +91,8 @@ plot_log_atm_skew <- function(iv_matrix, scenario, config) {
   
   title_sub = paste0(names(scenario), sep = " = ", scenario, collapse = ", ")
   if (is.null(scenario)) title_sub = "Market"
+  
+  par(mfrow = c(1,1))
   
   plot(maturities, abs(atm_skew), 
        main = paste('Term Structure of ATM-Skew (log-log)', title_sub, sep = "\n"),
