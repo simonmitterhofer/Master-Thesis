@@ -1,24 +1,24 @@
-\section{Modeling Framework} \label{sec:ModFramework}
+\section{Modeling Framework} \label{sec: Modeling Framework}
 
 This section presents the mathematical framework underlying the Hypergeometric Volatility Model. The model consists of a risk-neutral asset price process with stochastic volatility driven by a latent signal. The volatility dynamics are designed to capture both roughness and long memory. The framework is developed, beginning with the asset price and volatility specification, followed by the definition of the signal process, and concluding with its approximation and normalization of the signal.
 
 
-\subsection{Asset Price and Volatility Model} \label{subsec:AssetPriceVolatilityModel}
+\subsection{Asset Price and Volatility Model} \label{subsec: Asset Price Volatility Model}
 
-Consider a financial market model with a positive constant risk-free interest rate $r$ and a risky asset $S$. The price of the risky asset is a stochastic process $S = \{S_t\}_{0 \leq t \leq T}$. Under the risk-neutral measure, its dynamics follow the stochastic differential equation
+Consider a financial market model with a positive constant risk-free interest rate $r$ and a non-dividend paying risky asset $S$. The spot price of the risky asset is modeled as a stochastic process $S = \{S_t\}_{0 \leq t \leq T}$. Under the risk-neutral measure, its dynamics follow the stochastic differential equation
 \begin{equation} \label{eq:AssetSDE}
     \mathrm{d} S_t = r S_t \,\mathrm{d}t + \lambda(X_t) S_t \,\mathrm{d}W_t^S
 \end{equation}
-where $W^S$ is a standard Brownian motion and $\lambda(X_t)$ is a strictly positive stochastic volatility process. The volatility depends on a latent signal process $X = \{X_t\}_{0 \leq t \leq T}$ and is specified according to the exponential volatility model introduced by \citet{BennedsenLundePakkanen2021}:
+where $W^S$ is a standard Brownian motion and $\lambda(X_t)$ denotes the stochastic volatility process. The volatility depends on a latent signal process $X = \{X_t\}_{0 \leq t \leq T}$ and is specified following the model introduced by \citet{BennedsenLundePakkanen2021}:
 \begin{equation} \label{eq:Volatility}
-    \lambda(X_t) = b \cdot \exp \left( a \cdot \frac{X_t}{\bar{\sigma}_X} \right)
+    \lambda(X_t) = b \cdot \exp \left( a \cdot \frac{X_t}{\bar{\sigma}_X} - \frac{a^2}{2} \right)
 \end{equation}
-with volatility level parameter $b > 0$ and volatility scale parameter $a > 0$, which controls the sensitivity to changes in the signal process. The normalization constant $\bar{\sigma}_X$ denotes the long-term standard deviation of $X_t$ and ensures that volatility magnitudes remain comparable across parameter regimes. The specification guarantees that volatility remains strictly positive and allows for occasional extreme spikes, while separating level effects from signal dynamics.
+where $b > 0$ is the base volatility level and $a > 0$ is a volatility scale parameter, which determines the sensitivity to the signal. The $b$ determines the long-term average volatility level, while $a$ controls the amplification of fluctuations in the latent signal. Larger values of $a$ lead to sharper and more frequent volatility spikes. The term $\bar{\sigma}_X$ denotes the long-term standard deviation of the signal process and serves as a normalization factor to ensure comparability across parameter settings. The correction term $-a^2/2$ centers the volatility level. 
 
-The parameter $b$ determines the long-term average volatility level, while $a$ controls the amplification of fluctuations in the latent signal. Larger values of $a$ lead to sharper and more frequent volatility spikes.
+The specification guarantees that volatility remains strictly positive and allows for occasional extreme spikes, while separating level effects from signal dynamics.
 
 
-\subsection{Signal Process} \label{subsec:SignalProcess}
+\subsection{Signal Process} \label{subsec: Signal Process}
 
 The roughness and persistence in the volatility dynamics are introduced through the latent signal process $X$. It is defined as a stochastic convolution integral of the form
 \begin{equation} \label{eq:StochInt}
@@ -40,7 +40,7 @@ By \citet{CarmonaCoutin1998}, stochastic integrals with Laplace transform kernel
 Each $Z_t^{(x)}$ is an Ornstein-Uhlenbeck process with mean-reversion speed $x$, zero mean, unit volatility, and initial value zero. All Ornstein-Uhlenbeck processes are driven by the same Brownian motion $W^V$, preserving the dependency structure necessary for roughness.
 
 
-\subsection{Roughness and Long Memory} \label{subsec:RoughnessLongMemory}
+\subsection{Roughness and Long Memory} \label{subsec: Roughness and Long Memory}
 
 The small-time and large-time asymptotics of the kernel $h(u)$ determine the roughness and persistence properties of the signal process $X$. Using the substitution $y = xu$, the kernel behaves as
 \begin{align} \label{eq:KernelAsyptotics}
@@ -54,7 +54,7 @@ Following \citet{BennedsenLundePakkanen2021}, the signal process $X$ exhibits ro
 is in the interval $\left(0,\frac{1}{2}\right)$, resulting in sample paths that are rougher than standard Brownian motion. Long memory is implied by the slow decay of $h(u)$ as $u \to \infty$.
 
 
-\subsection{Finite-Dimensional Approximation} \label{subsec:FiniteDimensionalApproximation}
+\subsection{Finite-Dimensional Approximation} \label{subsec: Finite-Dimensional Approximation}
 
 The infinite-dimensional representation \eqref{eq:Signal} is approximated by truncating and discretizing the mixture into $J$ Ornstein-Uhlenbeck components. Following the method of \citet{CarmonaCoutingMontseny2000}, the signal process is approximated as
 \begin{equation} \label{eq:FiniteApprox}
@@ -81,7 +81,7 @@ For the choice of the partition $0 < \xi_0 < \xi_1 < \ldots < \xi_J < \infty$, \
 Here, $\alpha = H + \frac{1}{2}$ is related to the roughness of the process. This construction ensures equal mass under $\mu$ in each interval $[\xi_{j-1},\xi_{j}]$.
 
 
-\subsection{Long-Term Variance} \label{subsec:LongTermVariance}
+\subsection{Long-Term Variance} \label{subsec: Long-Term Variance}
 
 To normalize the signal process $X_t$, its variance is computed. Since $X_t$ is centered, the variance is given by
 \begin{equation} \label{eq:SignalVariance}

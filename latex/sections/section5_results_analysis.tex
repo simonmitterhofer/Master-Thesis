@@ -1,1 +1,64 @@
-\section{Simulation Results and Analysis} \label{sec:Results}
+\section{Simulation Results and Analysis} \label{sec:SimulationResults}
+
+This section presents the analysis of the simulation results. First, a set of quality criteria is defined that a simulated implied volatility surface must satisfy in order to be considered successful. These criteria are motivated by empirical stylized facts from financial markets. Then, the simulation output is evaluated across different parameter constellations. Parameter ranges with high success rates are identified, and a ceteris paribus analysis is conducted to study the effect of changing individual parameters.
+
+
+\subsection{Simulation Quality Criteria}
+
+Given the well-documented empirical properties of implied volatility surfaces in financial markets, five quality criteria are defined for assessing the simulation output:
+\begin{itemize}
+    \item The put–call parity must hold.
+    \item The implied volatility smile must exhibit convexity.
+    \item The at-the-money (ATM) volatility skew should be negative.
+    \item The ATM skew should increase with time to maturity over the term structure.
+    \item The ATM skew term structure should decay approximately according to a power law.
+\end{itemize}
+A simulated surface is considered successful if all five criteria are satisfied.
+
+\subsubsection*{Put–Call Parity Criterion}
+The put–call parity condition establishes a fundamental relationship between the prices of European call and put options. At time \( t \), it states:
+\begin{equation} \label{eq:PutCallParity}
+    C_t - P_t = S_t - K \cdot B(t,T),
+\end{equation}
+where \( C_t \) and \( P_t \) denote the prices of a European call and put option with strike \( K \) and maturity \( T \), \( S_t \) is the spot price of the asset, and \( B(t,T) = e^{-r(T-t)} \) is the discount factor under the assumption of a constant risk-free rate \( r \).
+
+In the simulation, this relation is evaluated at \( t = 0 \). The relative violation of the put–call parity is computed elementwise using the option value matrices and the initial asset price. A scenario satisfies the put–call parity criterion if the mean relative violation does not exceed 0.1\% and the maximum violation does not exceed 0.5\%.
+
+Verifying this condition ensures that the simulated prices of puts and calls are internally consistent. As a result, it is reasonable to aggregate the two implied volatility matrices (from puts and calls) into a single surface for further analysis.
+
+
+\subsubsection*{Smile Convexity Criterion}
+In real markets, implied volatility typically follows a smile-shaped pattern across strikes for a fixed maturity, with lower implied volatility at-the-money and higher implied volatility deep in- or out-of-the-money. To test for this convexity, a quadratic polynomial is fitted to the implied volatilities for each maturity.
+
+If the fitted curve has a positive leading coefficient and an \( R^2 \)-value above 90\%, the smile is considered convex at that maturity. If this is true for at least 90\% of maturities, the criterion is considered satisfied.
+
+\subsubsection*{ATM Skew Negativity Criterion}
+Empirically, the ATM volatility skew tends to be negative, meaning that the implied volatility decreases with increasing moneyness around the at-the-money level. The ATM skew is defined as in \citet{Gatheral2024} by
+\begin{equation} \label{eq:ATMSkew}
+    \psi(\tau) := \left. \frac{\partial}{\partial k} \sigma_{\text{BS}}(k, \tau) \right|_{k = 0},
+\end{equation}
+where $\sigma_{\text{BS}}(k, \tau)$ is the implied Black–Scholes volatility for log-moneyness $k$ and maturity $\tau$.
+
+The ATM skew negativity criterion is satisfied if $\psi(\tau) < 0$ for at least 90\% of the maturities.
+
+\subsubsection*{ATM Skew Increase Criterion}
+It is commonly observed that the magnitude of the ATM skew diminishes with increasing maturity, leading to a flattening term structure. Hence, the ATM skew function $\psi(\tau)$ is expected to increase in maturity.
+
+This behavior is tested by fitting a linear regression to $\psi(\tau)$ across maturities. If the slope of the regression line is positive, the criterion is considered fulfilled.
+
+\subsubsection*{ATM Skew Power Law Criterion}
+Empirical studies suggest that the ATM skew decays roughly according to a power law of the form
+\begin{equation} \label{eq:PowerLaw}
+    \psi(\tau) \sim \tau^{-\gamma}.
+\end{equation}
+To assess this, a linear model is fitted to the log-log plot of the ATM skew versus maturity. The ATM skew power law criterion is satisfied if the resulting model achieves an $R^2$-value greater than 90\%.
+
+
+\subsection{Success Rates Across Parameter Scenarios}
+
+
+
+
+
+
+

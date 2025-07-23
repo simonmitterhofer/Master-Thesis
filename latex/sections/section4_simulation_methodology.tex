@@ -1,11 +1,11 @@
-\section{Simulation Methodology} \label{sec:SimulationMethodology}
+\section{Simulation Methodology} \label{sec: Simulation Methodology}
 
 This section provides a detailed description of the simulation framework used to generate asset price paths under the Hypergeometric Volatility model. First, the latent volatility signal is simulated, then the asset price dynamics are determined by sampling the log-returns based on the generated volatility. Finally, European option prices are computed via Monte Carlo simulation, and implied volatilities are derived through inversion of the Black-Scholes formula.
 
 
-\subsection{Time Discretization} \label{subsec:TimeDiscretization}
+\subsection{Time Discretization} \label{subsec: Time Discretization}
 
-The model presented in Section~\ref{sec:ModFramework} is defined in continuous time. However, for the purpose of simulation, a discrete-time version is considered. Let $T$ denote the time horizon and define an equidistant time grid $0 = t_0 < t_1 < \ldots < t_N = T$ with step size $\Delta t = T/N$. At each time step $t_i$ for $i = 0,\ldots,N-1$, Brownian motion increments are generated, and then the state of the signal and asset price processes are updated.
+The model presented in Section~\ref{sec: Modeling Framework} is defined in continuous time. However, for the purpose of simulation, a discrete-time version is considered. Let $T$ denote the time horizon and define an equidistant time grid $0 = t_0 < t_1 < \ldots < t_N = T$ with step size $\Delta t = T/N$. At each time step $t_i$ for $i = 0,\ldots,N-1$, Brownian motion increments are generated, and then the state of the signal and asset price processes are updated.
 
 The simulation requires two Brownian motions: $W^V$, which drives the volatility signal, and $W^S$, which drives the asset price. These are modeled as correlated processes, in line with the leverage effect commonly observed in financial markets. At each time step $t_i$, correlated Brownian motion increments $(\Delta W_i^V$ and $\Delta W_i^S)$ are generated such that $\mathrm{Cov}(\Delta W_{t_i}^V, \Delta W_{t_i}^S) = \rho \cdot \Delta t$.
 
@@ -17,9 +17,9 @@ This is achieved by drawing two independent standard normal random variables $\v
 This is repeated at each of the $N$ time points.
 
 
-\subsection{Simulation of the Signal Process} \label{subsec:SimulationSignalProcess}
+\subsection{Simulation of the Signal Process} \label{subsec: Simulation of the Signal Process}
 
-The latent volatility signal is modeled as a finite-dimensional approximation of an infinite mixture of Ornstein-Uhlenbeck processes, as described in Section~\ref{subsec:FiniteDimensionalApproximation}. For simulation purposes, the explicit solution of the Ornstein-Uhlenbeck stochastic differential equation is used. This method ensures numerical stability and avoids discretization bias.
+The latent volatility signal is modeled as a finite-dimensional approximation of an infinite mixture of Ornstein-Uhlenbeck processes, as described in Section~\ref{subsec: Finite-Dimensional Approximation}. For simulation purposes, the explicit solution of the Ornstein-Uhlenbeck stochastic differential equation is used. This method ensures numerical stability and avoids discretization bias.
 
 Let $J$ denote the number of Ornstein-Uhlenbeck components, with mean-reversion speeds $\kappa_j$ and weights $c_j$ obtained from the geometric partitioning scheme. For each component $Z_t^{(j)}$, the update rule is given by
 \begin{equation} \label{eq:TimeDiscrOUExact}
@@ -33,18 +33,18 @@ After updating all $Z^{(j)}$, the signal process is computed at each time step a
 \end{equation}
 
 
-\subsection{Volatility Specification} \label{subsec:VolatilitySpecification}
+\subsection{Volatility Specification} \label{subsec: Volatility Specification}
 
 Once the signal process $X_t$ has been generated, the stochastic volatility process is obtained through the exponential transformation
 \begin{equation} \label{eq:TimeDiscrVolatility}
-    \lambda(X_{t_i}) = b \cdot \exp\left( a \cdot \frac{X_{t_i}}{\Bar{\sigma}_X} \right),
+    \lambda(X_{t_i}) = b \cdot \exp\left( a \cdot \frac{X_{t_i}}{\Bar{\sigma}_X} - \frac{a^2}{2} \right),
 \end{equation}
-where $b > 0$ controls the volatility level and $a > 0$ determines the sensitivity to changes in the signal. This specification ensures that the volatility remains strictly positive and allows for extreme spikes, in line with emprical observations in financial markets. To ensure comparability across different parameter settings, the signal is normalized by its long-term standard deviation $\Bar{\sigma}_X$, as discussed in Section~\ref{subsec:LongTermVariance}.
+where $b > 0$ controls the volatility level and $a > 0$ determines the sensitivity to changes in the signal. This specification ensures that the volatility remains strictly positive and allows for extreme spikes, in line with emprical observations in financial markets. To ensure comparability across different parameter settings, the signal is normalized by its long-term standard deviation $\Bar{\sigma}_X$ and centered by the correction term, as discussed in Section~\ref{subsec: Long-Term Variance}.
 
 The entire volatility path ${\lambda(X_{t_i})}_{i=0}^N$ is computed prior to asset price simulatio and stored for later use in the construction of log-returns.
 
 
-\subsection{Simulation of the Asset Price Process} \label{subsec:SimulationAssetPriceProcess}
+\subsection{Simulation of the Asset Price Process} \label{subsec: Simulation of the Asset Price Process}
 
 Given the discrete-time volatility path and the correlated Brownian motion increments from Equation~\eqref{eq:BrownianMotions}, the asset price process is simulated using a log-Euler scheme under the risk-neutral measure. The log-return over each time step is given by
 \begin{equation} \label{eq:TimeDiscrLogReturn}
@@ -61,7 +61,7 @@ starting from an initial price $S_0 > 0$. The final price path is then recovered
 Finally, this procedure yields a full discrete-time asset price path $S_0, S_1, \ldots, S_N$. This simulation technique ensures that the price process remains strictly positive at all times.
 
 
-\subsection{Monte Carlo Option Pricing} \label{subsec:MonteCarloOptionPricing}
+\subsection{Monte Carlo Option Pricing} \label{subsec: Monte Carlo Option Pricing}
 
 The simulated asset price paths are used to compute European option prices via risk-neutral Monte Carlo valuation. Let $M$ denote the number of independent Monte Carlo paths. For each simulation run $m = 1, \ldots, M$, the price points corresponding to a pre-specified set of maturities $\{T_1,\ldots,T_Q\} \subset \{t_0,\ldots,t_N\}$ are extracted from the full trajectory $\{S_{t_i}^{(m)}\}_{i=0}^N$. This allows for efficient pricing of European options across a range of maturities without requiring resimulation.
 
@@ -71,12 +71,12 @@ For each maturity $T_q$ and strike $K_l$ from the predefined grid $\{K_1,\ldots,
 \end{equation}
 and analogously, the European put price is given by
 \begin{equation}
-    CPK_l, T_q) = \mathbb{E}\left[ e^{-rT_q} (K_l - S_{T_q})^+ \right] \approx \frac{e^{-rT_q}}{M} \sum_{m=1}^M \max\left(K_l - S_{T_q}^{(m)}, 0\right).
+    P(K_l, T_q) = \mathbb{E}\left[ e^{-rT_q} (K_l - S_{T_q})^+ \right] \approx \frac{e^{-rT_q}}{M} \sum_{m=1}^M \max\left(K_l - S_{T_q}^{(m)}, 0\right).
 \end{equation}
 This procedure yields a matrix of option prices for each combination of strike and maturity. All pricing is performed under the risk-neutral measure, using the constant risk-free rate $r$ for discounting.
 
 
-\subsection{Implied Volatility Surface Computation} \label{subsec:ImpliedVolatilitySurfaceComputation}
+\subsection{Implied Volatility Surface Computation} \label{subsec: Implied Volatility Surface Computation}
 
 For each computed option price, the corresponding implied volatility is obtained by inverting the Black-Scholes pricing formula. Let $V_{\text{MC}}$ denote the Monte Carlo price of a call or put option with strike $K$ and maturity $T$. The implied volatility $\sigma_{\text{IV}}$ is defined as the unique positive solution to
 \begin{equation}
@@ -89,7 +89,7 @@ The inversion is carried out numerically using a root-finding algorithm, such as
 The result is a matrix of implied volatilites $\sigma_{\text{IV}}(K_l,T_q)$ that forms the simulated volatility surface. This surface serves as the primary output of the model and forms the basis for the analysis in Section~\ref{sec:Results}.
 
 
-\subsection{Output for Subsequent Analysis} \label{subsec:SimulationOutput}
+\subsection{Output for Subsequent Analysis} \label{subsec: Output for Subsequent Analysis}
 
 Each complete simulation run with $M$ Monte Carlo paths and fixed model parameters is referred to as a \emph{scenario}. A scenario is fully characterized by a specific confugiration of the parameters $(J, \gamma_1, \gamma_2, \rho, a, b, r)$. The roughness parameter $H$ is not an independent input, but is determined by the relation $H = \gamma_1 + \gamma_2 - \frac{1}{2}$.
 
@@ -97,13 +97,13 @@ The output generated from a scenario scenario consists of three main components 
 
 First, two matrices of option values are computed: one for European call options and one for European put options. These matrices are evaluated over a common pre-defined grid of strikes $\{K_1, \ldots, K_L\}$ and maturities $\{T_1, \ldots, T_Q\}$. Both matrices are retained to allow for consistency checks, such as verification of put-call parity.
 
-Second, the option prices are transformed into implied volatilities via numerical inversion of the Black-Scholes formula, as described in Section~\ref{subsec:ImpliedVolatilitySurfaceComputation}. This results in two implied volatility matrices, one for calls and one for puts. These are then aggregated by computing the element-wise average, wherever both values are available. In cases where only one implied volatility can be obtained due to numerical issues, the available value is used directly.
+Second, the option prices are transformed into implied volatilities via numerical inversion of the Black-Scholes formula, as described in Section~\ref{subsec: Implied Volatility Surface Computation}. This results in two implied volatility matrices, one for calls and one for puts. These are then aggregated by computing the element-wise average, wherever both values are available. In cases where only one implied volatility can be obtained due to numerical issues, the available value is used directly.
 
 The final output per scenario thus consists of the following elements: 
 \begin{itemize}
     \item The list of scenario parameters $(J, \gamma_1, \gamma_2, \rho, a, b, r)$,
     \item Two option value matrices (calls and puts), primarily used for diagnostic purposes,
-    \item Ene aggregated implied volatility matrix used in the subsequent analysis.
+    \item One aggregated implied volatility matrix used in the subsequent analysis.
 \end{itemize}
 
-All matrices are computed on the same grid of strikes and maturities. The aggregated implied volatility matrix serves as the primary object of interest and is used throughout the analysis in Section~\ref{sec:Results}.
+All matrices are computed on the same grid of strikes and maturities. The aggregated implied volatility matrix serves as the primary object of interest and is used throughout the analysis in Section~\ref{sec: Simulation Results and Analysis}.
