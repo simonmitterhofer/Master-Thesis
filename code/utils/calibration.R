@@ -90,13 +90,17 @@ process_market_data <- function(options_data, config) {
   options_data_clean <- options_data %>%
     filter(
       impl_volatility > 0,
-      #impl_volatility <= 1,
-      log_moneyness > -2,
-      log_moneyness <= 2,
+      impl_volatility <= 1,
+      log_moneyness > -1.2,
+      log_moneyness <= 1.2,
       maturity >= 0,
       maturity <= 3
     ) %>%
     na.omit()
+  
+  cat("Observations:", sum(!is.na(options_data_clean$impl_volatility)), "\n")
+  cat("Maturity:", range(options_data_clean$maturity), "\n")
+  cat("Moneyness:", exp(range(options_data_clean$log_moneyness)), "\n")
   
   # Binning and averaging
   options_data_clean <- options_data_clean %>%
@@ -132,7 +136,7 @@ process_market_data <- function(options_data, config) {
     xo = log_moneyness,
     yo = maturities,
     linear = TRUE,
-    duplicate = "median"
+    duplicate = "mean"
   )
   
   # Create market IV matrix
