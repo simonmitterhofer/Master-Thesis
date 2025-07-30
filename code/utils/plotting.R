@@ -6,12 +6,16 @@ source("models/implied_volatility.R")
 # Plot implied volatility surface
 plot_vol_surface <- function(iv_matrix, scenario, config) {
   
+  iv_matrix[iv_matrix > 0.95] <- NA
+
+  iv_matrix[1:2, ] <- NA
+  
   strikes <- as.numeric(gsub("K", "", colnames(iv_matrix)))
   moneyness <- strikes / config$simulation$S0
   maturities <- as.numeric(gsub("T", "", rownames(iv_matrix)))
   
   title_sub = paste0(names(scenario), sep = " = ", scenario, collapse = ", ")
-  if (is.null(scenario)) title_sub = "Market"
+  if (is.null(scenario)) title_sub = "Market (March 2023)"
   
   par(mfrow = c(1,1))
   
@@ -25,7 +29,7 @@ plot_vol_surface <- function(iv_matrix, scenario, config) {
         xlab = "Log-Moneyness",
         ylab = "Time to Maturity",
         zlab = "Implied Volatility",
-        zlim = c(0, 0.7),
+        zlim = c(0, 1),
         ticktype = "detailed",
         main = paste("Implied Volatility Surface", title_sub, sep = "\n"),
         cex.main = 1.2,
@@ -49,12 +53,12 @@ plot_vol_smiles <- function(iv_matrix, scenario, config) {
       mar = c(3, 3, 2, 1))
   
   title_sub = paste0(names(scenario), sep = " = ", scenario, collapse = ", ")
-  if (is.null(scenario)) title_sub = "Market"
+  if (is.null(scenario)) title_sub = "Market (March 2023)"
   
   for (i in seq_along(maturities)) {
     plot(moneyness, iv_matrix[i, ], main = paste0("T = ", maturities[i]), 
          xlab = "", ylab = "", 
-         xlim = range(moneyness, na.rm = TRUE), ylim = range(iv_matrix, na.rm = TRUE),
+         xlim = range(moneyness, na.rm = TRUE), ylim = c(0, 3),
          type = "o", lwd = 1, col = "blue")
     grid()
   }
@@ -71,13 +75,14 @@ plot_atm_skew <- function(iv_matrix, scenario, config) {
   atm_skew <- compute_atm_skew(iv_matrix, config)
   
   title_sub = paste0(names(scenario), sep = " = ", scenario, collapse = ", ")
-  if (is.null(scenario)) title_sub = "Market"
+  if (is.null(scenario)) title_sub = "Market (March 2023)"
   
   par(mfrow = c(1,1))
   
   plot(maturities, atm_skew, 
        main = paste('Term Structure of ATM-Skew', title_sub, sep = "\n"), 
-       xlab = 'Time to Maturity', ylab = 'ATM-Skew', ylim = c(-1, 0),
+       xlab = 'Time to Maturity', ylab = 'ATM-Skew',
+       xlim = c(0.003, 2), ylim = c(-1.7, 0),
        type = 'b', lwd = 2, col = "blue")
   grid()
 }
@@ -90,7 +95,7 @@ plot_log_atm_skew <- function(iv_matrix, scenario, config) {
   logfit <- lm(log(abs(atm_skew)) ~ log(maturities))
   
   title_sub = paste0(names(scenario), sep = " = ", scenario, collapse = ", ")
-  if (is.null(scenario)) title_sub = "Market"
+  if (is.null(scenario)) title_sub = "Market (March 2023)"
   
   par(mfrow = c(1,1))
   
@@ -99,6 +104,7 @@ plot_log_atm_skew <- function(iv_matrix, scenario, config) {
        sub = paste0("Slope = ", round(coef(logfit)[2], 3), ", R² = ", 
                     round(summary(logfit)$r.squared, 3)),
        xlab = 'Time to Maturity (log)', ylab = 'ATM-Skew (log)', log = 'xy',
+       xlim = c(0.003, 2), ylim = c(0.15, 1.7),
        type = 'b', lwd = 2, col = 'blue')
   grid()
   

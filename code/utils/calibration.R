@@ -89,10 +89,10 @@ process_market_data <- function(options_data, config) {
   # Clean data
   options_data_clean <- options_data %>%
     filter(
-      impl_volatility > 0.05,
-      impl_volatility <= 0.7,
-      log_moneyness > -1.5,
-      log_moneyness <= 1.5,
+      impl_volatility > 0,
+      #impl_volatility <= 1,
+      log_moneyness > -2,
+      log_moneyness <= 2,
       maturity >= 0,
       maturity <= 3
     ) %>%
@@ -101,8 +101,8 @@ process_market_data <- function(options_data, config) {
   # Binning and averaging
   options_data_clean <- options_data_clean %>%
     mutate(
-      log_moneyness_bin = cut(log_moneyness, breaks = seq(-1.5, 1.5, by=0.04)),
-      maturity_bin = cut(maturity, breaks = seq(0, 2, by=0.03))
+      log_moneyness_bin = cut(log_moneyness, breaks = seq(-1.2, 1.2, length.out = 19)^3),
+      maturity_bin = cut(maturity, breaks = exp(seq(log(0.0019), log(2.5), length.out = 23)))
     )
   
   iv_summary <- options_data_clean %>%
@@ -118,7 +118,7 @@ process_market_data <- function(options_data, config) {
   
   # Get simulation grid
   S0 <- config$simulation$S0
-  sample_iv_matrix <- results$implied_vols[[1]][[1]]  # First scenario, first option type
+  sample_iv_matrix <- results$implied_vols[[1]][[1]]
   
   moneyness <- as.numeric(gsub("K", "", colnames(sample_iv_matrix))) / S0
   maturities <- as.numeric(gsub("T", "", rownames(sample_iv_matrix)))
@@ -132,12 +132,12 @@ process_market_data <- function(options_data, config) {
     xo = log_moneyness,
     yo = maturities,
     linear = TRUE,
-    duplicate = "mean"
+    duplicate = "median"
   )
   
   # Create market IV matrix
   iv_matrix_market <- t(iv_interp$z)
-  colnames(iv_matrix_market) <- paste0("K", round(exp(iv_interp$x) * S0, 1))
+  colnames(iv_matrix_market) <- paste0("K", round(exp(iv_interp$x) * S0, 2))
   rownames(iv_matrix_market) <- paste0("T", round(iv_interp$y, 3))
   
   return(iv_matrix_market)
@@ -207,5 +207,5 @@ plot_market_surface <- function(market_iv_matrix, config) {
   persp(log_moneyness, maturities, t(market_iv_matrix),
         zlim = c(0.1, 1), theta = 40, phi = 20, expand = 0.5,
         col = "lightblue", xlab = "Log-Moneyness", ylab = "Time to Maturity", 
-        zlab = "IV", ticktype = "detailed", main = "Market IV Surface")
+        zlab = "Implied Volatility", ticktype = "detailed", main = "Market IV Surface")
 }

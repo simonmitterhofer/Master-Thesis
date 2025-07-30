@@ -29,23 +29,31 @@ save_simulation_results <- function(results, config, timestamp = Sys.Date()) {
 # Save simulation results
 load_simulation_results <- function(data_dir) {
   result_files <- list.files(data_dir, pattern = "results.*\\.rds", full.names = TRUE)
-  results <- readRDS(result_files[1])
+  results <- readRDS(result_files[length(result_files)])
   
   return( results )
 }
 
-# Save plot of implied volatility surface
 save_plot_vol_surface <- function(iv_matrix, scenario, config,
                                   output_dir = NULL, filename = NULL) {
+  
+  digits <- c(b = 2, a = 1, r = 2, rho = 1, gamma2 = 2, gamma1 = 2, H = 2, J = 0)
   if ( is.null(filename) ) {
     filename = paste0("scenario", rownames(scenario), "_",
-                      paste(names(scenario), round(scenario, 2), sep = "=", collapse = "_"),
+                      paste(names(scenario), 
+                            mapply(sprintf, sprintf("%%.%df", digits[names(scenario)]), scenario), 
+                            sep = "=", collapse = "_"),
                       "_iv_surface.png")
   }
   if ( filename == "rev" ) {
     filename = paste0("iv_surf_S", rownames(scenario), "_",
-                      paste(names(scenario), round(scenario, 2), sep = "=", collapse = "_"),
+                      paste(names(scenario), 
+                            mapply(sprintf, sprintf("%%.%df", digits[names(scenario)]), scenario), 
+                            sep = "=", collapse = "_"),
                       ".png")
+  }
+  if ( is.null(scenario) ) {
+    filename = paste0("market_iv_surface.png")
   }
   
   if ( !dir.exists(output_dir) ) dir.create(output_dir, recursive = TRUE)
@@ -58,15 +66,24 @@ save_plot_vol_surface <- function(iv_matrix, scenario, config,
 # Save plot of volatility smiles
 save_plot_vol_smiles <- function(iv_matrix, scenario, config,
                                  output_dir = NULL, filename = NULL) {
+
+  digits <- c(b = 2, a = 1, r = 2, rho = 1, gamma2 = 2, gamma1 = 2, H = 2, J = 0)
   if ( is.null(filename) ) {
     filename = paste0("scenario", rownames(scenario), "_",
-                      paste(names(scenario), round(scenario, 2), sep = "=", collapse = "_"),
+                      paste(names(scenario), 
+                            mapply(sprintf, sprintf("%%.%df", digits[names(scenario)]), scenario), 
+                            sep = "=", collapse = "_"),
                       "_iv_smiles.png")
   }
   if ( filename == "rev" ) {
-    filename = paste0("iv_smiles_S", rownames(scenario), "_",
-                      paste(names(scenario), round(scenario, 2), sep = "=", collapse = "_"),
+    filename = paste0("smiles_S", rownames(scenario), "_",
+                      paste(names(scenario), 
+                            mapply(sprintf, sprintf("%%.%df", digits[names(scenario)]), scenario), 
+                            sep = "=", collapse = "_"),
                       ".png")
+  }
+  if ( is.null(scenario) ) {
+    filename = paste0("market_iv_smiles.png")
   }
   
   if ( !dir.exists(output_dir) ) dir.create(output_dir, recursive = TRUE)
@@ -79,15 +96,24 @@ save_plot_vol_smiles <- function(iv_matrix, scenario, config,
 # Save plot of ATM-skew term structure
 save_plot_atm_skew <- function(iv_matrix, scenario, config,
                                output_dir = NULL, filename = NULL) {
+  
+  digits <- c(b = 2, a = 1, r = 2, rho = 1, gamma2 = 2, gamma1 = 2, H = 2, J = 0)
   if ( is.null(filename) ) {
     filename = paste0("scenario", rownames(scenario), "_",
-                      paste(names(scenario), round(scenario, 2), sep = "=", collapse = "_"),
+                      paste(names(scenario), 
+                            mapply(sprintf, sprintf("%%.%df", digits[names(scenario)]), scenario), 
+                            sep = "=", collapse = "_"),
                       "_atm_skew.png")
   }
   if ( filename == "rev" ) {
     filename = paste0("skew_S", rownames(scenario), "_",
-                      paste(names(scenario), round(scenario, 2), sep = "=", collapse = "_"),
+                      paste(names(scenario), 
+                            mapply(sprintf, sprintf("%%.%df", digits[names(scenario)]), scenario), 
+                            sep = "=", collapse = "_"),
                       ".png")
+  }
+  if ( is.null(scenario) ) {
+    filename = paste0("market_atm_skew.png")
   }
   
   if ( !dir.exists(output_dir) ) dir.create(output_dir, recursive = TRUE)
@@ -100,15 +126,23 @@ save_plot_atm_skew <- function(iv_matrix, scenario, config,
 # Save plot of ATM-skew term structure
 save_plot_log_atm_skew <- function(iv_matrix, scenario, config, 
                                    output_dir = NULL, filename = NULL) {
+  
+  digits <- c(b = 2, a = 1, r = 2, rho = 1, gamma2 = 2, gamma1 = 2, H = 2, J = 0)
   if ( is.null(filename) ) {
     filename = paste0("scenario", rownames(scenario), "_",
-                      paste(names(scenario), round(scenario, 2), sep = "=", collapse = "_"),
+                      paste(names(scenario), 
+                            mapply(sprintf, sprintf("%%.%df", digits[names(scenario)]), scenario), 
+                            sep = "=", collapse = "_"),
                       "_atm_skew_log.png")
   }
   if ( filename == "rev" ) {
-    filename = paste0("skew_log_S", rownames(scenario), "_",
-                      paste(names(scenario), round(scenario, 2), sep = "=", collapse = "_"),
-                      ".png")
+    filename = paste0("skw_log_S", rownames(scenario), "_",
+                      paste(names(scenario), 
+                            mapply(sprintf, sprintf("%%.%df", digits[names(scenario)]), scenario), 
+                            sep = "=", collapse = "_"), ".png")
+  }
+  if ( is.null(scenario) ) {
+    filename = paste0("market_atm_skew_log.png")
   }
   
   if ( !dir.exists(output_dir) ) dir.create(output_dir, recursive = TRUE)
@@ -190,7 +224,11 @@ create_parameter_analysis <- function(variable_pars, results, analysis_df, summa
     
     fixed_combination <- data.frame(lapply(lapply(fixed_pars_combinations[i, ], as.character), as.numeric))
     
-    subfolder <- paste(names(fixed_combination), fixed_combination, sep = "=", collapse = "_")
+    digits <- c(b = 2, a = 1, r = 2, rho = 1, gamma2 = 2, gamma1 = 2, H = 2, J = 0)
+    
+    subfolder <- paste(names(fixed_combination), 
+                       mapply(sprintf, sprintf("%%.%df", digits[names(fixed_combination)]), fixed_combination), 
+                       sep = "=", collapse = "_")
     
     conditions_list <- lapply(fixed_pars, function(fixed_par) {
       analysis_df[[fixed_par]] == fixed_combination[[fixed_par]]
