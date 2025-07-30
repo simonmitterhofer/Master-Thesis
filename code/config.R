@@ -4,7 +4,7 @@
 create_config <- function() {
   config <- list(
     simulation = list(
-      num_paths = 100000,  # Sample paths
+      num_paths = 50000,  # Sample paths
       dt = 0.001,  # Time increment
       T0 = 0,  # Initial time
       TN = 2,  # Final time
@@ -30,12 +30,12 @@ create_scenarios <- function() {
   
   # Simulation scenarios with parameters J, H, gamma2, rho, a
   scenarios <- expand.grid(    
-    a = c(0.5, 0.7, 1.0, 1.4, 2),  # Volatility scale parameter
-    b = c(0.10, 0.15, 0.20, 0.25),  # Volatility level parameter
+    a = c(1),  # Volatility scale parameter
+    b = c(0.20),  # Volatility level parameter
     r = c(0.02),  # Risk-free rate
-    rho = c(-0.5, -0.4, -0.3, -0.2),  # Correlation
-    gamma2 = c(0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45),  # Persistence
-    H = c(0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.40),  # Hurst parameter
+    rho = c(-0.7, -0.6, -0.5, -0.4, -0.3, -0.2),  # Correlation
+    gamma2 = c(0.15),  # Persistence
+    H = c(0.20),  # Hurst parameter
     J = c(20),  # Dimension of OU approximation
     stringsAsFactors = FALSE
   )
