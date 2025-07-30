@@ -1,64 +1,170 @@
-\section{Simulation Results and Analysis} \label{sec:SimulationResults}
+\section{Simulation Results and Analysis} \label{sec:SimulationResultsAnalysis}
 
-This section presents the analysis of the simulation results. First, a set of quality criteria is defined that a simulated implied volatility surface must satisfy in order to be considered successful. These criteria are motivated by empirical stylized facts from financial markets. Then, the simulation output is evaluated across different parameter constellations. Parameter ranges with high success rates are identified, and a ceteris paribus analysis is conducted to study the effect of changing individual parameters.
+This section presents the analysis of the simulation results. A simulated scenario is considered successful if the resulting implied volatility surface satisfies all five quality criteria. These criteria are motivated by empirical stylized facts observed in financial markets and are designed to assess whether a simulated surface can be regarded as realistic.
+
+First, the quality criteria are formally defined. Next, a ceteris paribus analysis is conducted to isolate the effect of individual model parameters. Finally, the simulation output is evaluated across a broad set of parameter constellations, and parameter ranges with high success rates are identified.
 
 
-\subsection{Simulation Quality Criteria}
+\subsection{Simulation Quality Criteria} \label{subsec:SimulationQualityCriteria}
 
-Given the well-documented empirical properties of implied volatility surfaces in financial markets, five quality criteria are defined for assessing the simulation output:
+Based on empirical observations in financial markets, five quality criteria are defined to assess the plausibility of simulated implied volatility surfaces:
 \begin{itemize}
-    \item The put–call parity must hold.
+    \item Put-call parity must hold.
     \item The implied volatility smile must exhibit convexity.
     \item The at-the-money (ATM) volatility skew should be negative.
-    \item The ATM skew should increase with time to maturity over the term structure.
+    \item The ATM skew should increase with time to maturity.
     \item The ATM skew term structure should decay approximately according to a power law.
 \end{itemize}
-A simulated surface is considered successful if all five criteria are satisfied.
+A simulation scenario is considered successful if the corresponding implied volatility surface satisfies all five quality criteria.
 
-\subsubsection*{Put–Call Parity Criterion}
-The put–call parity condition establishes a fundamental relationship between the prices of European call and put options. At time \( t \), it states:
+\subsubsection*{Put-Call Parity Criterion}
+The put-call parity (see \citealp{Björk2009}) establishes a fundamental no-arbitrage relationship between the prices of European call and put options. At time $t$, it states:
 \begin{equation} \label{eq:PutCallParity}
     C_t - P_t = S_t - K \cdot B(t,T),
 \end{equation}
-where \( C_t \) and \( P_t \) denote the prices of a European call and put option with strike \( K \) and maturity \( T \), \( S_t \) is the spot price of the asset, and \( B(t,T) = e^{-r(T-t)} \) is the discount factor under the assumption of a constant risk-free rate \( r \).
+where $C_t$ and $P_t$ denote the prices of a European call and put option with strike $K$ and maturity $T \geq t$, $S_t$ is the spot price of the underlying asset, and $B(t,T) = e^{-r(T - t)}$ is the discount factor under a constant risk-free rate $r$.
 
-In the simulation, this relation is evaluated at \( t = 0 \). The relative violation of the put–call parity is computed elementwise using the option value matrices and the initial asset price. A scenario satisfies the put–call parity criterion if the mean relative violation does not exceed 0.1\% and the maximum violation does not exceed 0.5\%.
+In the simulation, this relation is evaluated at $t = 0$. The element-wise relative deviation from parity is computed as:
+\begin{equation} \label{eq:PutCallViolation}
+    \text{Relative Error}_{l,q} = \left| \frac{C_0^{(l,q)} - P_0^{(l,q)} - \left( S_0 - K_l e^{-r T_q} \right)}{S_0} \right|,
+\end{equation}
+where the indices $(l, q)$ refer to the strike $K_l$ and maturity $T_q$.
 
-Verifying this condition ensures that the simulated prices of puts and calls are internally consistent. As a result, it is reasonable to aggregate the two implied volatility matrices (from puts and calls) into a single surface for further analysis.
-
+A simulation scenario satisfies the put-call parity criterion if the mean relative deviation across all $(l, q)$ does not exceed 0.1\% and the maximum violation does not exceed 0.5\%. Satisfying this condition ensures internal consistency between simulated call and put prices, justifying their aggregation into a single implied volatility surface.
 
 \subsubsection*{Smile Convexity Criterion}
-In real markets, implied volatility typically follows a smile-shaped pattern across strikes for a fixed maturity, with lower implied volatility at-the-money and higher implied volatility deep in- or out-of-the-money. To test for this convexity, a quadratic polynomial is fitted to the implied volatilities for each maturity.
+In financial markets, implied volatility typically exhibits a smile-shaped pattern across strikes for a fixed maturity: volatility tends to be lowest at-the-money and higher for deep in- or out-of-the-money options. To assess this convexity, a quadratic polynomial is fitted to the implied volatilities for each maturity.
 
-If the fitted curve has a positive leading coefficient and an \( R^2 \)-value above 90\%, the smile is considered convex at that maturity. If this is true for at least 90\% of maturities, the criterion is considered satisfied.
+If the fitted parabola has a positive leading coefficient and an $R^2$-value above 90\%, the smile is considered convex at that maturity. The criterion is satisfied if this convex smile pattern is observed for the shortest maturity and for at least 90\% of all maturities overall.
+
 
 \subsubsection*{ATM Skew Negativity Criterion}
-Empirically, the ATM volatility skew tends to be negative, meaning that the implied volatility decreases with increasing moneyness around the at-the-money level. The ATM skew is defined as in \citet{Gatheral2024} by
+Empirically, the ATM volatility skew tends to be negative, meaning that implied volatility decreases with increasing moneyness around the at-the-money level. The ATM skew is defined as in \citet{BayerFrizGatheral2016} by
 \begin{equation} \label{eq:ATMSkew}
     \psi(\tau) := \left. \frac{\partial}{\partial k} \sigma_{\text{BS}}(k, \tau) \right|_{k = 0},
 \end{equation}
-where $\sigma_{\text{BS}}(k, \tau)$ is the implied Black–Scholes volatility for log-moneyness $k$ and maturity $\tau$.
+where $\sigma_{\text{BS}}(k, \tau)$ is the implied Black-Scholes volatility for log-moneyness $k$ and maturity $\tau$.
 
 The ATM skew negativity criterion is satisfied if $\psi(\tau) < 0$ for at least 90\% of the maturities.
 
 \subsubsection*{ATM Skew Increase Criterion}
-It is commonly observed that the magnitude of the ATM skew diminishes with increasing maturity, leading to a flattening term structure. Hence, the ATM skew function $\psi(\tau)$ is expected to increase in maturity.
+It is commonly observed that the magnitude of the ATM skew diminishes with increasing maturity, resulting in a flatter term structure. Hence, the ATM skew function $\psi(\tau)$ is expected to increase with maturity, i.e., become less steep for longer maturities.
 
-This behavior is tested by fitting a linear regression to $\psi(\tau)$ across maturities. If the slope of the regression line is positive, the criterion is considered fulfilled.
+This behavior is tested by fitting a linear regression to $\psi(\tau)$ across maturities. If the slope of the fitted line is positive, the criterion is considered satisfied.
 
 \subsubsection*{ATM Skew Power Law Criterion}
-Empirical studies suggest that the ATM skew decays roughly according to a power law of the form
+Empirical studies suggest that the ATM skew decays approximately as a power law (see \citealp{Fukasawa2011} and \citealp{GatheralJaissonRosenbaum2018}) of the form:
 \begin{equation} \label{eq:PowerLaw}
-    \psi(\tau) \sim \tau^{-\gamma}.
+    \psi(\tau) \sim \tau^{-\gamma},
 \end{equation}
-To assess this, a linear model is fitted to the log-log plot of the ATM skew versus maturity. The ATM skew power law criterion is satisfied if the resulting model achieves an $R^2$-value greater than 90\%.
+with $\gamma = \tfrac{1}{2} - H$. To test for this behavior, a linear regression is performed on the log-log plot of $\psi(\tau)$ versus $\tau$. This corresponds to testing whether $\log \psi(\tau)$ is approximately linear in $\log(\tau)$.
+
+The power law criterion is satisfied if the resulting regression model achieves an $R^2$-value greater than 90\%.
 
 
-\subsection{Success Rates Across Parameter Scenarios}
+\subsection{Individual Parameter Effects} \label{subsec:IndividualParameterEffects}
+
+This section analyzes how changing one model parameter, while keeping all others fixed, affects the shape of the implied volatility surface and the values of the simulation quality criteria. The analysis is conducted in a ceteris paribus fashion and provides intuition for the results of the full parameter sweep in later sections.
+
+\subsubsection*{Effect of the Roughness Parameter $H$}
+For lower values of $H$ (i.e., rougher sample paths), the short-term ATM skew tends to decrease in magnitude. Additionally, the slope of the log-log regression fitted to the ATM skew term structure flattens, indicating that the power-law exponent decreases in absolute value as $H$ decreases.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{figures/5.2.1 Effect of H/iv_surface_H=0.10.png}
+    \includegraphics[width=0.45\textwidth]{figures/5.2.1 Effect of H/iv_surface_H=0.40.png}
+    \caption{Effect of roughness index $H$ on the implied volatility surface. Left: $H=0.10$. Right: $H=0.40$.}
+    \label{fig:H_effect}
+\end{figure}
+
+\subsubsection*{Effect of Correlation Parameter $\rho$}
+Decreasing the correlation $\rho$ between the Brownian motions driving the asset price and the volatility process (i.e., increasing the leverage effect) introduces a rightward tilt in the implied volatility surface. This results in lower implied volatilities for positive log-moneyness and higher volatilities for negative log-moneyness. As a consequence, the ATM skew increases in magnitude.
+
+\subsubsection*{Effect of Volatility Scale Parameter $a$}
+Increasing the volatility scale parameter $a$ amplifies the influence of the latent signal process on the volatility level. This leads to higher implied volatilities in the wings, i.e., for deep in- or out-of-the-money options. The ATM skew magnitude also increases, particularly for short maturities.
+
+\subsubsection*{Effect of Base Volatility Level $b$}
+Raising the base volatility level $b$ shifts the entire implied volatility surface upward. Additionally, it increases the magnitude of the slope in the log-log regression of the ATM skew, suggesting a steeper power-law decay. This reflects a stronger term structure effect in the skew.
+
+\subsubsection*{Effect of Persistence Parameter $\gamma_2$}
+Higher values of $\gamma_2$ increase the persistence in the signal process. This reduces the short-term ATM skew and flattens the power-law slope in the log-log skew regression. Overall, increased persistence slightly lowers the implied volatility surface, especially at short maturities.
+
+\subsubsection*{Effect of Risk-Free Interest Rate $r$}
+Changes in the risk-free interest rate $r$ have no effect on the implied volatility surface, as expected under risk-neutral pricing. This serves as a consistency check for the numerical implementation.
 
 
+\subsection{Success Rate Analysis} \label{subsec:SuccessRateAnalysis}
+
+To evaluate model performance, this section analyzes the proportion of simulation scenarios that satisfy the five quality criteria defined in Section~\ref{subsec:SimulationQualityCriteria}. Each scenario corresponds to a unique configuration of model parameters. A scenario is considered successful if all five criteria are met.
+
+\subsubsection*{Overall Success Rates}
+Table~\ref{tab:OverallSuccessRates} summarizes the proportion of scenarios satisfying each individual criterion. Put-call parity is satisfied in 93\% of all simulations, while the smile convexity criterion is met in 75\% of cases. The skew negativity and skew monotonicity criteria are fulfilled in all scenarios. The power-law fit criterion is satisfied in 80\% of cases, and 74\% of all scenarios meet all five criteria simultaneously.
+
+\begin{table}[h]
+    \centering
+    \small
+    \begin{tabular}{lccccc}
+        \toprule
+        Criterion & Put-Call Parity & Smile Convexity & Skew Negative & Skew Increasing & Skew Power Law \\
+        \midrule
+        Success Rate & 93\% & 75\% & 100\% & 100\% & 80\% \\
+        \bottomrule
+    \end{tabular}
+    \caption{Overall success rates across all simulation scenarios.}
+    \label{tab:OverallSuccessRates}
+\end{table}
+
+\subsubsection*{Effect of the Roughness Parameter \texorpdfstring{$H$}{H}}
+The roughness index $H$ has a noticeable impact. The put-call parity success rate increases monotonically from 84\% at $H = 0.05$ to 100\% at $H = 0.4$. However, smile convexity shows a non-monotonic pattern, peaking at $H = 0.10$-$0.15$ (78-79\%) and dropping to 66\% at $H = 0.4$. The skew negativity and skew monotonicity criteria are satisfied across all $H$. The power-law fit shows mild deterioration from 84\% to 77\%. Overall, $H \in [0.10, 0.15]$ appears to offer the best trade-off across criteria.
+
+\subsubsection*{Effect of the Kernel Parameters \texorpdfstring{$\gamma_1$}{gamma1} and \texorpdfstring{$\gamma_2$}{gamma2}}
+The parameters $\gamma_1$ and $\gamma_2$ control the shape and memory properties of the mixing kernel. Success rates remain remarkably stable across the grid. For $\gamma_1$, put-call parity rises from 86\% to 99\%, while smile convexity declines slightly from 78\% to 71\%. The power-law fit also falls modestly from 84\% to 75\%. For $\gamma_2$, the put-call parity improves from 90\% to 96\%, while other criteria remain nearly constant. These results confirm the robustness of the model to long-memory structure, provided the implied relationship $\gamma_1 = H + 0.5 - \gamma_2$ is satisfied.
+
+\subsubsection*{Effect of the Volatility Amplification Parameter \texorpdfstring{$a$}{a}}
+The volatility scale parameter $a$ has the strongest influence on simulation quality. For $a \leq 1.4$, the model performs well, with most criteria satisfied in over 95\% of scenarios. However, at $a = 2.0$, simulation performance degrades significantly: smile convexity drops to 0\%, put-call parity to 66\%, and power-law fit to just 4\%. This suggests that excessive amplification of volatility leads to unstable surfaces, and that $a$ should be kept below 1.4.
+
+\subsubsection*{Effect of the Base Volatility Level \texorpdfstring{$b$}{b}}
+The parameter $b$ affects the level of volatility in the model. Higher $b$ values improve smile convexity (from 64\% at $b = 0.10$ to 79\% at $b = 0.25$) and support skew criteria, but slightly reduce put-call parity satisfaction (from 99\% to 89\%). This reflects a trade-off: more realistic volatility levels improve surface shape but introduce minor numerical inconsistencies. Overall, $b \in [0.15, 0.25]$ offers the best balance.
+
+\subsubsection*{Effect of the Correlation Parameter \texorpdfstring{$\rho$}{rho}}
+The correlation $\rho$ between the Brownian motions driving the asset and the signal process has only a modest effect. More negative values slightly improve put-call parity (97\% at $\rho = -0.5$ vs. 89\% at $\rho = -0.2$), while smile convexity and power-law fit remain largely stable. The ATM skew criteria are always satisfied. These results suggest that the model is robust with respect to $\rho$ within the tested range.
+
+\subsubsection*{Parameter Grid Used in the Simulation Study}
+The simulation study was based on a structured grid of parameters chosen to reflect realistic variation in volatility dynamics. In total, 5040 scenarios were evaluated, where the following values were tested:
+\begin{itemize}
+    \item Roughness index $H \in \{0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.40\}$
+    \item Persistence parameter $\gamma_2 \in \{0.05, 0.10, \ldots, 0.45\}$
+    \item Volatility scale parameter $a \in \{0.5, 0.7, 1.0, 1.4, 2.0\}$
+    \item Base volatility level $b \in \{0.10, 0.15, 0.20, 0.25\}$
+    \item Correlation $\rho \in \{-0.5, -0.4, -0.3, -0.2\}$
+\end{itemize}
+The parameter $\gamma_1$ was computed using the identity
+\begin{equation*}
+    \gamma_1 = H + \tfrac{1}{2} - \gamma_2,
+\end{equation*}
+according to Equation~\eqref{eq:HurstIndex} to ensure the correct asymptotic behavior of the hypergeometric kernel.
 
 
+\subsection{Optimal Parameter Ranges}
 
+Based on the success rate analysis, the following parameter regions yield the best simulation performance:
+\begin{itemize}
+    \item \textbf{Roughness index $H$:} Best performance occurs for $H \in [0.10, 0.15]$.
+    \item \textbf{Volatility amplification $a$:} Stability breaks down for $a > 1.4$; optimal range is $a \in [0.5, 1.4]$.
+    \item \textbf{Base volatility level $b$:} Higher $b$ improves realism; best results for $b \in [0.15, 0.25]$.
+    \item \textbf{Correlation $\rho$:} Performance is robust across tested values; $\rho \leq -0.3$ slightly preferred.
+    \item \textbf{Kernel parameters $\gamma_1$, $\gamma_2$:} No strong sensitivity observed; model is robust within the tested range.
+\end{itemize}
+These parameter ranges provide the foundation for model calibration and surface fitting in Section~\ref{sec:Calibration}.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/5.2.1 Effect of H/iv_surface_H=0.10.png}
+    \caption{Example of a simulated implied volatility surface using optimal parameters.}
+    \label{fig:BestSurface}
+\end{figure}
 
+The surface shown in Figure~\ref{fig:BestSurface} was generated using:
+\[
+H = 0.10, \quad a = 1.0, \quad b = 0.20, \quad \rho = -0.4, \quad \gamma_2 = 0.25, \quad \gamma_1 = H + 0.5 - \gamma_2.
+\]
+This configuration satisfies all five quality criteria and produces a realistic surface shape consistent with observed market data.

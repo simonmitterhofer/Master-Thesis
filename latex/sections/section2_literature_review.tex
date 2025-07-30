@@ -1,24 +1,51 @@
-\section{Literature Review} \label{sec: Literature Review}
+\section{Literature Review} \label{sec:LiteratureReview}
 
-This section provides an overview of the literature
-
-
-\subsection{Empirical Properties of Volatility and Limitations of Classical Models} \label{subsec: Empirical Properties of Volatility}
-
-In mathematical finance, classical models of asset prices usually treat volatility either as a deterministic function of time or as a continuous process driven by Brownian motion. In the Black-Scholes framework, volatility is assumed to be constant, while the Heston model \citep{Heston1993} introduces stochastic volatility through a mean-reverting process. However, both models struggle to reproduce some typical features of volatility observed in financial markets. These include volatility clustering, persistent behavior over time, and the characteristic shapes of implied volatility surfaces—such as volatility smiles and skews \citep{Rubinstein1985}. In particular, they fail to capture the power-law behavior of the at-the-money (ATM) volatility skew. As a result, the option prices these models produce often deviate significantly from market prices.
-
-Recent empirical studies, such as \citet{GatheralJaissonRosenbaum2018}, indicate that log-volatility processes behaves similarly to a fractional Brownian motion with a Hurst parameter around $H \approx 0.1$. This means that volatility paths are irregular or \emph{rough}, with strongly negatively correlated increments at short time scales. Classical models are unable to replicate this behavior. In addition, volatility is known to show \emph{long memory}, i.e. the autocorrelations of realized volatility decay slowly over time, indicating persistent effects.
-
-Together, these findings suggest that volatility is both rough and persistent. This has motivated the development of new volatility models that go beyond the classical Markovian setting and aim to better match the observed behavior in financial markets.
+This section reviews key developments in volatility modeling, starting with classical models and their limitations, followed by empirical findings on volatility roughness and persistence. It concludes with modern modeling approaches and practical methods for simulation and approximation.
 
 
+\subsection{Empirical Properties of Volatility and Limitations of Classical Models} \label{subsec:EmpiricalVolatility}
 
-\subsection{Fractional and Rough Volatility Models} \label{subsec: Fractional and Rough Volatility Models}
+Classical models of asset price dynamics typically treat volatility as either a deterministic function of time or a continuous stochastic process driven by standard Brownian motion. The Black-Scholes model \citep{BlackScholes1973} assumes that volatility is constant, while the Heston model \citep{Heston1993} introduces stochastic volatility using a mean-reverting square-root process.
 
-To address the shortcomings of classical volatility models, researchers began exploring stochastic volatility models driven by fractional Brownian motion. Early contributions such as \citet{ComteRenault1998} proposed modeling volatility as a fractional Ornstein--Uhlenbeck process, where the driving noise has long memory properties. These models successfully reproduced persistent volatility dynamics and slow decay in autocorrelations, in line with empirical observations. However, they often relied on a Hurst parameter \( H > 0.5 \), and therefore did not capture the roughness (i.e., \( H < 0.5 \)) identified in more recent studies.
+Although these models are widely used and mathematically convenient, they do not fully capture how volatility behaves in real financial markets. Volatility tends to cluster, meaning that high or low volatility often persists over time. Realized volatility also exhibits long memory, i.e., past values influence future values over extended periods. These are part of the so-called “stylized facts” of financial time series \citep{Cont2001}.
 
-A major step forward came with the introduction of rough volatility models, particularly the rough Bergomi (rBergomi) model proposed by \citet{BayerFrizGatheral2016}. In this model, the volatility process is driven by a fractional Brownian motion with Hurst parameter \( H < 0.5 \), capturing the short-term irregularity of volatility trajectories. The rBergomi model matches the steep skew observed in short-maturity implied volatilities remarkably well, and has become a standard benchmark for rough volatility modeling. However, the model remains difficult to calibrate and simulate, due to its non-Markovian structure and the lack of closed-form solutions.
+In the options market, implied volatility surfaces show patterns that classical models fail to reproduce. These include volatility smiles and skews \citep{Rubinstein1985}, as well as a power-law decay of the at-the-money (ATM) volatility skew with increasing time to maturity \citep{GatheralJaissonRosenbaum2018}. As a result, option prices from these models often deviate significantly from observed market prices, especially for short maturities or deep out-of-the-money options.
 
-Another approach is the rough Heston model, introduced by \citet{ElEuchRosenbaum2019}, which extends the classical Heston framework by replacing the standard variance process with a fractional integral of a CIR-type process. This model retains some analytical tractability via generalized Riccati equations and offers a compromise between realism and computational complexity.
 
-While fractional and rough volatility models capture key empirical features of volatility, they often come at the cost of simulation complexity and limited interpretability. In particular, most models are not Markovian, and their calibration requires specialized numerical methods. The Hypergeometric Volatility Model addressed in this thesis aims to overcome these limitations by combining roughness and long memory in a Gaussian but tractable framework based on Laplace-mixed Ornstein--Uhlenbeck processes.
+\subsection{Motivation for Rough and Persistent Volatility Models} \label{subsec:MotivationRoughPersistent}
+
+The limitations of classical models have motivated researchers to seek more realistic representations of volatility. Recent empirical evidence indicates that volatility is not only stochastic, but exhibits two key properties that standard models fail to capture: roughness and persistence.
+
+\citet{GatheralJaissonRosenbaum2018} find that realized log-volatility behaves like a fractional Brownian motion with Hurst parameter $H \approx 0.1$. This low Hurst parameter implies highly irregular, or \emph{rough}, sample paths with negatively correlated increments. This behavior cannot be captured by models driven by standard Brownian motion.
+
+At the same time, volatility exhibits long memory, meaning that its autocorrelations decay slowly over time. This behavior has been documented in \citet{ComteRenault1998} and further studied in \citet{BennedsenLundePakkanen2021}, who develop kernel-based approaches to model long memory.
+
+Further theoretical support comes from \citet{Fukasawa2017}, who shows that power-law behavior in the ATM skew can arise under weak regularity conditions on the underlying volatility process. This result suggests that the observed patterns reflect fundamental structural market properties rather than statistical artifacts.
+
+These empirical and theoretical findings have motivated the development of new volatility models that aim to capture both short-term irregularity and long-term memory. Unlike traditional Markovian approaches, these models explicitly incorporate roughness and persistence, leading to improved performance in derivatives pricing and risk management applications.
+
+
+\subsection{Modern Volatility Models} \label{subsec:ModernVolModels}
+
+To incorporate roughness and long memory into volatility modeling, several new models have been proposed.
+
+\citet{GatheralJaissonRosenbaum2018} introduce the Rough Fractional Stochastic Volatility (RFSV) model, where log-volatility follows a fractional Ornstein-Uhlenbeck process driven by fractional Brownian motion with Hurst parameter $H < 0.5$. This specification successfully captures both short-term roughness and the power-law decay of the ATM skew observed in market data.
+
+The Rough Heston model by \citet{ElEuchRosenbaum2019} extends the classical Heston framework by incorporating a fractional kernel in the volatility dynamics. While the model is no longer Markovian, it still allows for semi-closed-form characteristic functions, making it suitable for European option pricing.
+
+Other generalizations include affine Volterra processes and affine rough volatility models, such as those in \citet{AbiJaberLarssonPulido2019}. These models incorporate memory effects by modeling volatility through stochastic convolution equations.
+
+\citet{BennedsenLundePakkanen2021} advocate the use of the Brownian semistationary (BSS) framework, which constructs volatility processes as convolution integrals of Brownian motion with deterministic kernels. The BSS approach offers a flexible structure for modeling volatility, allowing one to model both roughness and persistence through appropriate kernel specifications.
+
+Extending the convolution-based approach, \citet{Damian2021} introduces the Hypergeometric Volatility Model, which employs a hypergeometric mixing measure to define the convolution kernel. This construction yields a volatility process driven by a latent signal that enables control over both roughness and memory parameters. The hypergeometric framework serves as the basis for the analysis in this thesis and is presented in detail in Section~\ref{sec:ModelingFramework}.
+
+
+\subsection{Simulation and Approximation Methods} \label{subsec:SimulationApproximation}
+
+Rough volatility models often involve infinite-dimensional processes that cannot be simulated exactly, making approximation schemes necessary for practical implementation.
+
+A common approach relies on approximating these processes through mixtures of Ornstein-Uhlenbeck (OU) processes. \citet{CarmonaCoutin1998} show that stochastic convolutions with Laplace-type kernels can be expressed as infinite mixtures of OU processes with varying mean-reversion speeds. This decomposition preserves key properties such as stationarity and mean reversion.
+
+\citet{CarmonaCoutinMontseny2000} propose a finite-dimensional approximation by discretizing the integral over the mixing measure. The result is a weighted sum of OU processes that can be simulated efficiently.
+
+For this spatial discretization, \citet{DamianFrey2024} suggest the use of a geometric partitioning of the integration domain, ensuring that each of the intervals has the same mass under the mixing measure. This discretization method is implemented in this thesis for simulating the latent signal process and computing asset price dynamics under the Hypergeometric Volatility Model.
