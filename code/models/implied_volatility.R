@@ -127,7 +127,7 @@ compute_atm_skew <- function(iv_matrix, config) {
   strikes <- as.numeric(gsub("K", "", colnames(iv_matrix)))
   moneyness <- strikes / S0
   maturities <- as.numeric(gsub("T", "", rownames(iv_matrix)))
-  atm_idx <- which(strikes == S0)
+  atm_idx <- which.min(abs(moneyness - 1))
   
   atm_skew <- vapply(seq_along(maturities), function(i) {
     d_vol <- iv_matrix[i, atm_idx + 1] - iv_matrix[i, atm_idx - 1]
