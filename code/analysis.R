@@ -1,10 +1,10 @@
 # analysis.R
 # Analysis of rough volatility option pricing simulation results
 
-rm(list = ls())
+# rm(list = ls())
 
 # Set working directory
-setwd("~/Master Thesis/6_Rough Volatility Option Pricing Simulation")
+setwd("~/QFin/Master Thesis/code")
 
 # Source files
 source("utils/data_management.R")
@@ -14,8 +14,7 @@ source("utils/calibration.R")
 source("models/implied_volatility.R")
 
 # Load simulation results
-data_dir <- "SimulationData_2025-07-20"
-# data_dir <- "SimulationData"
+data_dir <- "SimulationData_2025-07-27"
 output_dir <- "Analysis"
 results <- load_simulation_results(data_dir)
 
@@ -32,13 +31,79 @@ parameter_values
 # 1. Basic scenario analysis ----------------------------------------------
 
 cat("1. Running scenario analysis...\n")
-scenario_analysis <- create_scenario_analysis(results)
-parameter_summary <- create_parameter_summary(scenario_analysis)
+# scenario_analysis <- create_scenario_analysis(results)
+# parameter_summary <- create_parameter_summary(scenario_analysis)
 
 # Save basic analysis
 if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
-# write.table(scenario_analysis, file = file.path(output_dir, "analysis_scenarios.csv"), sep = ";", row.names = TRUE, col.names = NA)
-# save_filtered_scenarios(results, subset(scenario_analysis, a == 1 & b == 0.2), output_dir)
+write.table(scenario_analysis, file = file.path(output_dir, "analysis_scenarios.csv"), sep = ";", row.names = TRUE, col.names = NA)
+
+save_filtered_scenarios(results, subset(scenario_analysis, 
+                                        H %in% c(0.2) &
+                                          a %in% c(0.7) &
+                                          gamma2 == 0.25 &
+                                          b %in% c(0.25) &
+                                          rho %in% c(-0.4)
+                                          ), "5.4 Optimal Parameter Ranges",
+                        filename = "optimal_example")
+
+save_filtered_scenarios(results, subset(scenario_analysis, 
+                                        H %in% c(0.2) &
+                                          a %in% c(1.0) &
+                                          gamma2 == 0.2 &
+                                          b %in% c(0.2) &
+                                          rho %in% c(-0.4)
+                                        ), "6.2 Best Fit Surface",
+                        filename = "best_fit")
+
+for (i in c(0.1, 0.4)) {
+  save_filtered_scenarios(results, subset(scenario_analysis, 
+                                          H == i &
+                                            a == 0.7 &
+                                            gamma2 == 0.25 &
+                                            b == 0.25 &
+                                            rho == -0.5
+                                          ), "5.2 Individual Parameter Effects",
+                          filename = paste0("H=", sprintf("%.2f", i)))
+}
+
+for (i in c(-0.6, -0.2)) {
+  save_filtered_scenarios(results, subset(scenario_analysis, 
+                                          H == 0.25 &
+                                            a == 0.7 &
+                                            gamma2 == 0.25 &
+                                            b == 0.25 &
+                                            rho == i
+  ), "5.2 Individual Parameter Effects",
+  filename = paste0("rho=", sprintf("%.1f", i)))
+}
+
+for (i in c(0.5, 1)) {
+  save_filtered_scenarios(results, subset(scenario_analysis, 
+                                          H == 0.25 &
+                                            a == i &
+                                            gamma2 == 0.25 &
+                                            b == 0.25 &
+                                            rho == -0.4
+  ), "5.2 Individual Parameter Effects",
+  filename = paste0("a=", sprintf("%.1f", i)))
+}
+
+for (i in c(0.2, 0.3)) {
+  save_filtered_scenarios(results, subset(scenario_analysis, 
+                                          H == 0.25 &
+                                            a == 0.7 &
+                                            gamma2 == 0.25 &
+                                            b == i &
+                                            rho == -0.4
+  ), "5.2 Individual Parameter Effects",
+  filename = paste0("b=", sprintf("%.1f", i)))
+}
+
+
+
+
+
 
 cat("   - Scenarios analyzed:", nrow(scenario_analysis), "\n")
 cat("   - Scenarios passing all tests:", sum(scenario_analysis$AllPassed), "\n")
@@ -80,7 +145,18 @@ summary(subset(scenario_analysis, b == 0.2 & H == 0.05))
 scenario_analysis_filtered <- subset(scenario_analysis, AllPassed & a == 1 & H == 0.1)
 parameter_summary_filtered <- create_parameter_summary(scenario_analysis_filtered)
 
-# fixed_combinations_H <- create_parameter_analysis("H", results, subset(scenario_analysis, b == 0.2 & a == 1), parameter_summary)
+
+# H:    [0.05, 0.3]
+# rho:  [-0.6, -0.2]
+# a:    [0.7, 1]
+# b:    [0.2, 0.3]
+
+
+
+
+fixed_combinations_H <- create_parameter_analysis("H", results, subset(scenario_analysis, 
+                                                                       b == 0.25 & a == 1 & rho == -0.4 & gamma2 == 0.25), 
+                                                  parameter_summary)
 
 # fixed_combinations_gamma2 <- create_parameter_analysis("gamma2", results, 
 #                                                        subset(scenario_analysis, 
@@ -120,7 +196,7 @@ cat("Results saved to:", output_dir, "\n")
 cat("\n2. Running market calibration...\n")
 
 # Run calibration
-calibration_results <- run_calibration(results, scenario_analysis, c("2023-03-01", "2023-03-31"))
+# calibration_results <- run_calibration(results, scenario_analysis, c("2023-03-01", "2023-03-31"))
 plot_vol_surface(calibration_results$market_iv_matrix, NULL, results$config)
 plot_vol_smiles(calibration_results$market_iv_matrix, NULL, results$config)
 plot_atm_skew(calibration_results$market_iv_matrix, NULL, results$config)
