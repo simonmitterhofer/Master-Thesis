@@ -3,7 +3,7 @@
 
 # Load required packages for calibration
 library(DBI)
-library(RPostgreSQL)
+library(RPostgres)
 library(dplyr)
 library(akima)
 
@@ -38,12 +38,13 @@ download_sp500_market_data <- function(start_date, end_date) {
   cat(Sys.getenv("WRDS_USER"), "\n")
   cat(Sys.getenv("WRDS_PASSWORD"), "\n")
   
-  con <- dbConnect(PostgreSQL(),
+  con <- dbConnect(RPostgres::Postgres(),
                    host = "wrds-pgdata.wharton.upenn.edu",
                    port = 9737,
                    dbname = "wrds",
                    user = Sys.getenv("WRDS_USER"),
-                   password = Sys.getenv("WRDS_PASSWORD"))
+                   password = Sys.getenv("WRDS_PASSWORD"),
+                   sslmode = "require")
   
   # Options query
   query_options <- paste0("
@@ -94,7 +95,7 @@ process_market_data <- function(options_data, config) {
       log_moneyness > -1.2,
       log_moneyness <= 1.2,
       maturity >= 0,
-      maturity <= 3
+      maturity <= 4
     ) %>%
     na.omit()
   
@@ -105,8 +106,8 @@ process_market_data <- function(options_data, config) {
   # Binning and averaging
   options_data_clean <- options_data_clean %>%
     mutate(
-      log_moneyness_bin = cut(log_moneyness, breaks = seq(-1.2, 1.2, length.out = 19)^3),
-      maturity_bin = cut(maturity, breaks = exp(seq(log(0.0019), log(2.5), length.out = 23)))
+      log_moneyness_bin = cut(log_moneyness, breaks = seq(-1.2, 1.2, length.out = 18)^3),
+      maturity_bin = cut(maturity, breaks = exp(seq(log(0.0019), log(3.5), length.out = 21)))
     )
   
   iv_summary <- options_data_clean %>%

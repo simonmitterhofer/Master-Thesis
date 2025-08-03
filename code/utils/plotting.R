@@ -6,9 +6,9 @@ source("models/implied_volatility.R")
 # Plot implied volatility surface
 plot_vol_surface <- function(iv_matrix, scenario, config) {
   
-  iv_matrix[iv_matrix > 0.95] <- NA
+  iv_matrix[iv_matrix > 0.99] <- 0.99
 
-  iv_matrix[1:2, ] <- NA
+  #iv_matrix[1, ] <- NA
   
   strikes <- as.numeric(gsub("K", "", colnames(iv_matrix)))
   moneyness <- strikes / config$simulation$S0
@@ -42,6 +42,7 @@ plot_vol_smiles <- function(iv_matrix, scenario, config) {
   
   strikes <- as.numeric(gsub("K", "", colnames(iv_matrix)))
   moneyness <- strikes / config$simulation$S0
+  log_moneyness <- log(moneyness)
   maturities <- as.numeric(gsub("T", "", rownames(iv_matrix)))
   
   n_cols <- ceiling(sqrt(length(maturities)))
@@ -56,9 +57,9 @@ plot_vol_smiles <- function(iv_matrix, scenario, config) {
   if (is.null(scenario)) title_sub = "Market (March 2023)"
   
   for (i in seq_along(maturities)) {
-    plot(moneyness, iv_matrix[i, ], main = paste0("T = ", maturities[i]), 
+    plot(log_moneyness, iv_matrix[i, ], main = paste0("T = ", maturities[i]), 
          xlab = "", ylab = "", 
-         xlim = range(moneyness, na.rm = TRUE), ylim = c(0, 3),
+         xlim = range(log_moneyness, na.rm = TRUE), ylim = c(0, 1),
          type = "o", lwd = 1, col = "blue")
     grid()
   }
@@ -82,7 +83,7 @@ plot_atm_skew <- function(iv_matrix, scenario, config) {
   plot(maturities, atm_skew, 
        main = paste('Term Structure of ATM-Skew', title_sub, sep = "\n"), 
        xlab = 'Time to Maturity', ylab = 'ATM-Skew',
-       xlim = c(0.003, 2), ylim = c(-1.7, 0),
+       xlim = c(0.003, 2), ylim = c(-2.5, 0),
        type = 'b', lwd = 2, col = "blue")
   grid()
 }
@@ -101,13 +102,14 @@ plot_log_atm_skew <- function(iv_matrix, scenario, config) {
   
   plot(maturities, abs(atm_skew), 
        main = paste('Term Structure of ATM-Skew (log-log)', title_sub, sep = "\n"),
-       sub = paste0("Slope = ", round(coef(logfit)[2], 3), ", R² = ", 
+       sub = paste0("Slope = ", round(coef(logfit)[2], 3), ", R^2 = ", 
                     round(summary(logfit)$r.squared, 3)),
        xlab = 'Time to Maturity (log)', ylab = 'ATM-Skew (log)', log = 'xy',
-       xlim = c(0.003, 2), ylim = c(0.15, 1.7),
+       xlim = c(0.003, 2), ylim = c(0.05, 2.5),
        type = 'b', lwd = 2, col = 'blue')
   grid()
   
   lines(as.numeric(gsub("T", "", names(exp(predict(logfit))))), exp(predict(logfit)), 
         col = "red", lwd = 2)
 }
+

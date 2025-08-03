@@ -23,7 +23,6 @@ save_simulation_results <- function(results, config, timestamp = Sys.Date()) {
                         paste0("results_", timestamp, ".rds"))
   saveRDS(results, filename)
   cat("\nSaved results to:", filename, "\n")
-  filename
 }
 
 # Save simulation results
@@ -44,21 +43,23 @@ save_plot_vol_surface <- function(iv_matrix, scenario, config,
                             mapply(sprintf, sprintf("%%.%df", digits[names(scenario)]), scenario), 
                             sep = "=", collapse = "_"),
                       "_iv_surface.png")
-  }
-  if ( filename == "rev" ) {
+  } else if ( filename == "rev" ) {
     filename = paste0("iv_surf_S", rownames(scenario), "_",
                       paste(names(scenario), 
                             mapply(sprintf, sprintf("%%.%df", digits[names(scenario)]), scenario), 
                             sep = "=", collapse = "_"),
                       ".png")
+  } else {
+    filename = paste0(filename, "_iv_surface.png")
   }
+  
   if ( is.null(scenario) ) {
     filename = paste0("market_iv_surface.png")
   }
   
   if ( !dir.exists(output_dir) ) dir.create(output_dir, recursive = TRUE)
   
-  png(file.path(output_dir, filename), width = 800, height = 600, res = 100)
+  png(file.path(output_dir, filename), width = 1000, height = 750, res = 100)
   plot_vol_surface(iv_matrix, scenario, config)
   dev.off()
 }
@@ -74,21 +75,23 @@ save_plot_vol_smiles <- function(iv_matrix, scenario, config,
                             mapply(sprintf, sprintf("%%.%df", digits[names(scenario)]), scenario), 
                             sep = "=", collapse = "_"),
                       "_iv_smiles.png")
-  }
-  if ( filename == "rev" ) {
+  } else if ( filename == "rev" ) {
     filename = paste0("smiles_S", rownames(scenario), "_",
                       paste(names(scenario), 
                             mapply(sprintf, sprintf("%%.%df", digits[names(scenario)]), scenario), 
                             sep = "=", collapse = "_"),
                       ".png")
+  } else {
+    filename = paste0(filename, "_iv_smiles.png")
   }
+  
   if ( is.null(scenario) ) {
     filename = paste0("market_iv_smiles.png")
   }
   
   if ( !dir.exists(output_dir) ) dir.create(output_dir, recursive = TRUE)
   
-  png(file.path(output_dir, filename), width = 800, height = 600, res = 100)
+  png(file.path(output_dir, filename), width = 1000, height = 750, res = 100)
   plot_vol_smiles(iv_matrix, scenario, config)
   dev.off()
 }
@@ -104,21 +107,23 @@ save_plot_atm_skew <- function(iv_matrix, scenario, config,
                             mapply(sprintf, sprintf("%%.%df", digits[names(scenario)]), scenario), 
                             sep = "=", collapse = "_"),
                       "_atm_skew.png")
-  }
-  if ( filename == "rev" ) {
+  } else if ( filename == "rev" ) {
     filename = paste0("skew_S", rownames(scenario), "_",
                       paste(names(scenario), 
                             mapply(sprintf, sprintf("%%.%df", digits[names(scenario)]), scenario), 
                             sep = "=", collapse = "_"),
                       ".png")
+  } else {
+    filename = paste0(filename, "_atm_skew.png")
   }
+  
   if ( is.null(scenario) ) {
     filename = paste0("market_atm_skew.png")
   }
   
   if ( !dir.exists(output_dir) ) dir.create(output_dir, recursive = TRUE)
   
-  png(file.path(output_dir, filename), width = 800, height = 600, res = 100)
+  png(file.path(output_dir, filename), width = 1000, height = 750, res = 100)
   plot_atm_skew(iv_matrix, scenario, config)
   dev.off()
 }
@@ -134,20 +139,22 @@ save_plot_log_atm_skew <- function(iv_matrix, scenario, config,
                             mapply(sprintf, sprintf("%%.%df", digits[names(scenario)]), scenario), 
                             sep = "=", collapse = "_"),
                       "_atm_skew_log.png")
-  }
-  if ( filename == "rev" ) {
+  } else if ( filename == "rev" ) {
     filename = paste0("skw_log_S", rownames(scenario), "_",
                       paste(names(scenario), 
                             mapply(sprintf, sprintf("%%.%df", digits[names(scenario)]), scenario), 
                             sep = "=", collapse = "_"), ".png")
+  } else {
+    filename = paste0(filename, "_atm_skew_log.png")
   }
+    
   if ( is.null(scenario) ) {
     filename = paste0("market_atm_skew_log.png")
   }
   
   if ( !dir.exists(output_dir) ) dir.create(output_dir, recursive = TRUE)
   
-  png(file.path(output_dir, filename), width = 800, height = 600, res = 100)
+  png(file.path(output_dir, filename), width = 1000, height = 750, res = 100)
   plot_log_atm_skew(iv_matrix, scenario, config)
   dev.off()
 }
@@ -255,3 +262,4 @@ create_parameter_analysis <- function(variable_pars, results, analysis_df, summa
   }
   return(fixed_combination_summary)
 }
+
