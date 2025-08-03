@@ -1,34 +1,44 @@
 \section{Calibration to Market Data} \label{sec:Calibration}
 
-This section validates the Hypergeometric Volatility Model by comparing its simulated implied volatility surfaces to observed market data. The analysis is based on S\&P 500 option data from the OptionMetrics database (accessed via WRDS) for March 2023. 
+This section validates the Hypergeometric Volatility Model by comparing its simulated implied volatility surfaces to observed market data. The analysis is based on S\&P 500 option data from the OptionMetrics database (accessed via WRDS) for March 2023.
 
 A mean implied volatility surface is constructed over a fixed moneyness-maturity grid using interpolation techniques. First, the simulation quality criteria from Section~\ref{subsec:SimulationQualityCriteria} are evaluated on the empirical surface. Then, the model is calibrated by identifying the parameter set that produces the best fit to the market surface in terms of Mean Squared Error (MSE).
 
-\subsection{Empirical Volatility Surface}
+
+\subsection{Empirical Volatility Surface} \label{subsec:EmpiricalVolatilitySurface}
 
 \subsubsection*{Data Collection and Preparation}
-S\&P 500 options data from March 2023 were retrieved via the WRDS interface to the OptionMetrics database. The dataset includes strike prices, expiration dates, and implied volatilities. Data cleaning was performed by removing invalid entries, including:
-\begin{itemize}
-    \item Implied volatilities exceeding 100\%
-    \item Maturities exceeding 3 years
-    \item Extreme moneyness values (very deep in- or out-of-the-money options)
-\end{itemize}
+S\&P 500 option data from March 2023 were retrieved through WRDS access to the OptionMetrics database. The dataset contains implied volatilities, strike prices, and expiration dates for listed equity index options.
 
-The cleaned data were then standardized: strike prices were converted to moneyness using the ratio $K/S$, and maturities were converted from calendar days to years. The resulting data points were binned onto a discrete moneyness-maturity grid and averaged to reduce noise. A bilinear interpolation method was applied to construct a smooth implied volatility surface compatible with the model's simulation grid.
+Data cleaning was performed by removing invalid or extreme entries, including:
+\begin{itemize}
+    \item Implied volatilities exceeding 100\%,
+    \item Maturities longer than 3 years,
+    \item Extremely deep in- or out-of-the-money options.
+\end{itemize}
+The cleaned dataset covers options observed from March 1 to March 31, 2023, and contains approximately 370{,}000 entries after cleaning. Maturities range from 1 day to 3 years, and strikes span a wide range of moneyness values from $K/S = 0.3$ to $K/S = 2.4$. This provides a comprehensive cross-section of the implied volatility surface across both short and long time horizons.
+
+Strike prices were converted to moneyness using the ratio $K/S$, and maturities were expressed in years. The cleaned data points were binned onto a discrete moneyness-maturity grid, averaged within bins to reduce noise and irregularities, and finally interpolated using linear interpolation.
+
+The resulting surface was evaluated on the same strikes-maturities grid used in Section~\ref{sec:SimulationResultsAnalysis}, with 15 maturities ranging from 1 day to 3 years and 17 moneyness levels from $K/S = 0.5$ to $K/S = 2.0$. This alignment ensures that simulated and empirical surfaces can be compared pointwise without requiring extrapolation.
+
 
 \subsubsection*{Evaluation of Quality Criteria}
-The empirical surface satisfies all four simulation quality criteria that can be evaluated using implied volatility data. The put-call parity criterion cannot be tested directly, as the OptionMetrics database provides implied volatilities but not raw option prices. 
+The empirical surface satisfies all four simulation quality criteria that can be evaluated based on implied volatility data. The put-call parity criterion cannot be directly tested, as raw option prices are not available in the OptionMetrics dataset, only implied volatilities are provided.
 
-Figure~\ref{fig:market_surface} and the associated diagnostics (smile slices, ATM skew, and log-log skew term structure) confirm that the empirical surface exhibits smile convexity, negative ATM skew, an increasing skew term structure, and approximate power-law behavior.
+Figure~\ref{fig:MarketSurface} and the associated diagnostics (smile slices, ATM skew, and log-log skew term structure) confirm that the empirical surface exhibits convexity in the implied volatility smile, negative ATM skew, an increasing skew term structure, and approximate power-law decay. These empirical features align closely with the simulation quality criteria defined in Section~\ref{subsec:SimulationQualityCriteria}, supporting the model's relevance for realistic option pricing.
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.45\textwidth]{figures/6.1.2 Market Surface/market_iv_surface.png}
-    \includegraphics[width=0.45\textwidth]{figures/6.1.2 Market Surface/market_iv_smiles.png}
-    \includegraphics[width=0.45\textwidth]{figures/6.1.2 Market Surface/market_atm_skew.png}
-    \includegraphics[width=0.45\textwidth]{figures/6.1.2 Market Surface/market_atm_skew_log.png}
-    \caption{S\&P 500 Volatility Surface from March 2023}
-    \label{fig:market_surface}
+    \includegraphics[width=0.45\textwidth]{figures/6.1 Market Surface/market_iv_surface.png}
+    \includegraphics[width=0.45\textwidth]{figures/6.1 Market Surface/market_iv_smiles.png}
+    \includegraphics[width=0.45\textwidth]{figures/6.1 Market Surface/market_atm_skew.png}
+    \includegraphics[width=0.45\textwidth]{figures/6.1 Market Surface/market_atm_skew_log.png}
+    \caption{Empirical implied volatility surface, smiles and ATM skew (S\&P 500; March 2023).}
+    \label{fig:MarketSurface}
 \end{figure}
+
+Looking at the empirical implied volatility surface from S\&P 500 option data in figure~\ref{fig:MarketSurface}, one can see that the surface exhibits all the typical properties: the surface is not flat, but shows convex smiles across all times to maturity, the ATM skew is both negative, as well as monotonically increasing for all times to maturity. Additionally, the ATM shows power law behaviour, the fitted linear regression in the log-log plot has an $R^2$-value of 95.6\%. Through regression, one finds the exponent of the power law as $\gamma = 0.277$. According to \cite{Fukasawa2011}, the empirical market process exhibits a roughness of $H = \tfrac{1}{2} - \gamma = 0.223$.
 
 
 \subsection{Calibration}
@@ -48,6 +58,16 @@ The optimal parameter configuration minimizing the MSE is
     \{ H = 0.20,\quad a = 1.0,\quad b = 0.20,\quad \gamma_2 = 0.20,\quad \gamma_1 = 0.50 \}.
 \end{equation*}
 
-Figure~\ref{fig:best_fit_surface} displays the resulting implied volatility surface, along with slices of volatility smiles, the ATM skew term structure, and the log-log power-law fit. Visual comparison with the empirical surface suggests a strong match, particularly in the short-maturity and near-the-money region.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{figures/6.2 Best Fit Surface/best_fit_iv_surface.png}
+    \includegraphics[width=0.45\textwidth]{figures/6.2 Best Fit Surface/best_fit_iv_smiles.png}
+    \includegraphics[width=0.45\textwidth]{figures/6.2 Best Fit Surface/best_fit_atm_skew.png}
+    \includegraphics[width=0.45\textwidth]{figures/6.2 Best Fit Surface/best_fit_atm_skew_log.png}
+    \caption{Implied volatility surface, smiles and ATM skew.}
+    \label{fig:BestFitSurface}
+\end{figure}
+
+Figure~\ref{fig:BestFitSurface} displays the resulting implied volatility surface, along with slices of volatility smiles, the ATM skew term structure, and the log-log power-law fit. Visual comparison with the empirical surface suggests a strong match, particularly in the short-maturity and near-the-money region.
 
 These results demonstrate that the Hypergeometric Volatility Model can replicate key features of observed market volatility surfaces, provided the parameters lie within the empirically favorable ranges identified in Section~\ref{subsec:SuccessRateAnalysis}.
