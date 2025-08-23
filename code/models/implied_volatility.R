@@ -86,6 +86,30 @@ compute_implied_vol_matrix <- function(option_values, r, config, option_type) {
   return(implied_vol)
 }
 
+# Linearly interpolate the implied volatility surface
+linear_interpolation <- function(iv_matrix, max_gap = 4) {
+  library(zoo)
+  nc <- ncol(iv_matrix)
+  dn <- dimnames(iv_matrix)
+  
+  # Fill short gaps along columns (maturities)
+  iv_matrix <- apply(iv_matrix, 2, function(c)
+    na.approx(c, maxgap = max_gap, na.rm = FALSE, rule = 2))
+  
+  # Exclude empirically irrelevant regions
+  iv_matrix[1, c(1:3, (nc-2):nc)] <- NA
+  iv_matrix[2, c(1:2, (nc-1):nc)] <- NA
+  iv_matrix[3, c(1, nc)] <- NA
+  iv_matrix[4, c(1, nc)] <- NA
+  iv_matrix[5, c(1, nc)] <- NA
+  
+  # Keep names
+  dimnames(iv_matrix) <- dn
+  
+  return( iv_matrix )
+}
+
+
 # Compute implied volatility matrices for both call and put options
 compute_implied_vol_matrices <- function(option_values, r, config) {
   
@@ -109,14 +133,17 @@ compute_implied_vol_matrices <- function(option_values, r, config) {
 
 # Aggregate put-call implied volatility
 aggregate_put_call_iv <- function(iv_matrices, type = c("mean", "combn")) {
-  iv_matrix_m <- apply(simplify2array(iv_matrices), c(1, 2), mean, na.rm = TRUE)
-  iv_matrix_m[is.nan(iv_matrix_m)] <- NA
+  
+  iv_matrix <- apply(simplify2array(iv_matrices), c(1, 2), mean, na.rm = TRUE)
+  iv_matrix[is.nan(iv_matrix)] <- NA
+  
+  iv_matrix <- linear_interpolation(iv_matrix)
   
   if (type == "mean") {
-    return( iv_matrix_m )
+    return( iv_matrix )
   } else if (type == "combn") {
-    iv_matrix_c <- cbind(iv_matrices$put[,1:(atm_idx-1)], iv_matrix_m[,atm_idx], iv_matrices$call[,(atm_idx+1):n_strikes])
-    return( iv_matrix_m )
+    iv_matrix_c <- cbind(iv_matrices$put[,1:(atm_idx-1)], iv_matrix[,atm_idx], iv_matrices$call[,(atm_idx+1):n_strikes])
+    return( iv_matrix )
   }
 }
 
@@ -138,9 +165,3 @@ compute_atm_skew <- function(iv_matrix, config) {
   
   return( atm_skew )
 }
-
-
-
-
-
-
