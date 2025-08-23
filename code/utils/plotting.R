@@ -5,10 +5,7 @@ source("models/implied_volatility.R")
 
 # Plot implied volatility surface
 plot_vol_surface <- function(iv_matrix, scenario, config) {
-  
-  iv_matrix[iv_matrix > 0.99] <- 0.99
-
-  #iv_matrix[1, ] <- NA
+  scenario <- scenario[-2]
   
   strikes <- as.numeric(gsub("K", "", colnames(iv_matrix)))
   moneyness <- strikes / config$simulation$S0
@@ -39,6 +36,7 @@ plot_vol_surface <- function(iv_matrix, scenario, config) {
 
 # Plot volatility smiles
 plot_vol_smiles <- function(iv_matrix, scenario, config) {
+  scenario <- scenario[-2]
   
   strikes <- as.numeric(gsub("K", "", colnames(iv_matrix)))
   moneyness <- strikes / config$simulation$S0
@@ -71,6 +69,7 @@ plot_vol_smiles <- function(iv_matrix, scenario, config) {
 
 # Plot ATM-skew term structure
 plot_atm_skew <- function(iv_matrix, scenario, config) {
+  scenario <- scenario[-2]
   
   maturities <- as.numeric(gsub("T", "", rownames(iv_matrix)))
   atm_skew <- compute_atm_skew(iv_matrix, config)
@@ -83,13 +82,14 @@ plot_atm_skew <- function(iv_matrix, scenario, config) {
   plot(maturities, atm_skew, 
        main = paste('Term Structure of ATM-Skew', title_sub, sep = "\n"), 
        xlab = 'Time to Maturity', ylab = 'ATM-Skew',
-       xlim = c(0.003, 2), ylim = c(-2.5, 0),
+       xlim = c(0.003, 3), ylim = c(-3.5, 0),
        type = 'b', lwd = 2, col = "blue")
   grid()
 }
 
 # Plot ATM-skew term structure (log-log)
 plot_log_atm_skew <- function(iv_matrix, scenario, config) {
+  scenario <- scenario[-2]
   
   maturities <- as.numeric(gsub("T", "", rownames(iv_matrix)))
   atm_skew <- compute_atm_skew(iv_matrix, config)
@@ -105,7 +105,7 @@ plot_log_atm_skew <- function(iv_matrix, scenario, config) {
        sub = paste0("Slope = ", round(coef(logfit)[2], 3), ", R^2 = ", 
                     round(summary(logfit)$r.squared, 3)),
        xlab = 'Time to Maturity (log)', ylab = 'ATM-Skew (log)', log = 'xy',
-       xlim = c(0.003, 2), ylim = c(0.05, 2.5),
+       xlim = c(0.003, 3), ylim = c(0.05, 3.5),
        type = 'b', lwd = 2, col = 'blue')
   grid()
   

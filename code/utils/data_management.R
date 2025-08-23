@@ -1,7 +1,7 @@
 # utils/data_management.R
 # Data saving and loading utilities
 
-source("utils/plotting.R")
+# source("utils/plotting.R")
 source("utils/filtering.R")
 
 # Ensure output directory exists
@@ -59,7 +59,7 @@ save_plot_vol_surface <- function(iv_matrix, scenario, config,
   
   if ( !dir.exists(output_dir) ) dir.create(output_dir, recursive = TRUE)
   
-  png(file.path(output_dir, filename), width = 1000, height = 750, res = 100)
+  png(file.path(output_dir, filename), width = 800, height = 600, res = 100)
   plot_vol_surface(iv_matrix, scenario, config)
   dev.off()
 }
@@ -91,7 +91,7 @@ save_plot_vol_smiles <- function(iv_matrix, scenario, config,
   
   if ( !dir.exists(output_dir) ) dir.create(output_dir, recursive = TRUE)
   
-  png(file.path(output_dir, filename), width = 1000, height = 750, res = 100)
+  png(file.path(output_dir, filename), width = 800, height = 600, res = 100)
   plot_vol_smiles(iv_matrix, scenario, config)
   dev.off()
 }
@@ -123,7 +123,7 @@ save_plot_atm_skew <- function(iv_matrix, scenario, config,
   
   if ( !dir.exists(output_dir) ) dir.create(output_dir, recursive = TRUE)
   
-  png(file.path(output_dir, filename), width = 1000, height = 750, res = 100)
+  png(file.path(output_dir, filename), width = 800, height = 600, res = 100)
   plot_atm_skew(iv_matrix, scenario, config)
   dev.off()
 }
@@ -154,7 +154,7 @@ save_plot_log_atm_skew <- function(iv_matrix, scenario, config,
   
   if ( !dir.exists(output_dir) ) dir.create(output_dir, recursive = TRUE)
   
-  png(file.path(output_dir, filename), width = 1000, height = 750, res = 100)
+  png(file.path(output_dir, filename), width = 800, height = 600, res = 100)
   plot_log_atm_skew(iv_matrix, scenario, config)
   dev.off()
 }
@@ -169,11 +169,11 @@ save_filtered_scenarios <- function(results, analysis_df,
                                     plot_atm_skew = TRUE,
                                     plot_log_atm_skew = TRUE,
                                     # Filter settings
-                                    filter_put_call_parity = TRUE,
-                                    filter_smile_convex = TRUE,
-                                    filter_skew_negative = TRUE,
-                                    filter_slope_increasing = TRUE,
-                                    filter_skew_powerlaw_fit = TRUE) {
+                                    filter_put_call_parity = F,
+                                    filter_smile_convex = F,
+                                    filter_skew_negative = F,
+                                    filter_slope_increasing = F,
+                                    filter_skew_powerlaw_fit = F) {
   config <- results$config
   iv_matrices <- results$implied_vols
   

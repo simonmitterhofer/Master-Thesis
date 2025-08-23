@@ -95,7 +95,7 @@ process_market_data <- function(options_data, config) {
       log_moneyness > -1.2,
       log_moneyness <= 1.2,
       maturity >= 0,
-      maturity <= 4
+      maturity <= 5
     ) %>%
     na.omit()
   
