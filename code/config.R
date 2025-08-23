@@ -4,12 +4,12 @@
 create_config <- function() {
   config <- list(
     simulation = list(
-      num_paths = 50000,  # Sample paths
+      num_paths = 300000,  # Sample paths
       dt = 0.001,  # Time increment
       T0 = 0,  # Initial time
-      TN = 2,  # Final time
+      TN = 3,  # Final time
       S0 = 100,  # Initial asset price
-      seed = 1   # Random seed
+      seed = 0   # Random seed
     ),
     
     output = list(
@@ -26,30 +26,72 @@ create_config <- function() {
 }
 
 create_scenarios <- function() {
-  scenarios <- list()
+  # # Simulation scenarios with parameters J, H, gamma2, rho, a
+  # scenarios <- expand.grid(    
+  #   a = c(0.5, 0.7, 1.0),  # Volatility scale parameter
+  #   b = c(0.10, 0.25, 0.30),  # Volatility level parameter
+  #   r = c(0.02),  # Risk-free rate
+  #   rho = c(-0.6, -0.4, -0.2),  # Correlation
+  #   gamma2 = c(0.10, 0.25, 0.40),  # Persistence
+  #   H = c(0.10, 0.25, 0.40),  # Hurst parameter
+  #   J = c(20),  # Dimension of OU approximation
+  #   stringsAsFactors = FALSE
+  # )
+  # 
+  # # Add gamma1 = H - gamma2 + 0.5
+  # scenarios$gamma1 = scenarios$H - scenarios$gamma2 + 0.5
+  # 
+  # # Reorder columns
+  # scenarios <- scenarios[, c("a", "b", "r", "rho", "gamma2", "gamma1", "H", "J")]
+  # 
+  # # Convert to list of scenarios
+  # scenarios <- lapply(seq(nrow(scenarios)), function(i) scenarios[i,])
+  # scenarios <- scenarios[c(41, 95, 113, 119, 121, 123, 125, 131, 149, 203)]
+  # 
+  # return(scenarios)
   
-  # Simulation scenarios with parameters J, H, gamma2, rho, a
-  scenarios <- expand.grid(    
-    a = c(1),  # Volatility scale parameter
-    b = c(0.20),  # Volatility level parameter
-    r = c(0.02),  # Risk-free rate
-    rho = c(-0.7, -0.6, -0.5, -0.4, -0.3, -0.2),  # Correlation
-    gamma2 = c(0.15),  # Persistence
-    H = c(0.20),  # Hurst parameter
-    J = c(20),  # Dimension of OU approximation
-    stringsAsFactors = FALSE
+  scenarios <- list(
+    c(0.10, 0.25, -0.4, 0.7, 0.25, 0.02, 20),
+    c(0.20, 0.25, -0.4, 0.7, 0.25, 0.02, 20),
+    c(0.40, 0.25, -0.4, 0.7, 0.25, 0.02, 20),
+    
+    c(0.25, 0.10, -0.4, 0.7, 0.25, 0.02, 20),
+    c(0.25, 0.40, -0.4, 0.7, 0.25, 0.02, 20),
+    
+    c(0.25, 0.25, -0.6, 0.7, 0.25, 0.02, 20),
+    c(0.25, 0.25, -0.2, 0.7, 0.25, 0.02, 20),
+    
+    c(0.25, 0.25, -0.4, 0.5, 0.25, 0.02, 20),
+    c(0.25, 0.25, -0.4, 1.0, 0.25, 0.02, 20),
+    
+    c(0.25, 0.25, -0.4, 0.7, 0.10, 0.02, 20),
+    c(0.25, 0.25, -0.4, 0.7, 0.40, 0.02, 20),
+    
+    c(0.25, 0.25, -0.4, 0.7, 0.25, 0.01, 20),
+    c(0.25, 0.25, -0.4, 0.7, 0.25, 0.05, 20),
+    
+    c(0.25, 0.25, -0.4, 0.7, 0.25, 0.02, 2),
+    c(0.25, 0.25, -0.4, 0.7, 0.25, 0.02, 5),
+    c(0.25, 0.25, -0.4, 0.7, 0.25, 0.02, 10),
+    c(0.25, 0.25, -0.4, 0.7, 0.25, 0.02, 20),
+    c(0.25, 0.25, -0.4, 0.7, 0.25, 0.02, 50),
+    
+    c(0.20, 0.25, -0.4, 1.0, 0.20, 0.02, 20),  # Optimal Surface
+    c(0.05, 0.20, -0.7, 1.0, 0.20, 0.02, 20),  # Best Fit
+    c(0.10, 0.15, -0.7, 1.0, 0.20, 0.02, 20)   # Best Fit
   )
   
-  # Add gamma1 = H - gamma2 + 0.5
-  scenarios$gamma1 = scenarios$H - scenarios$gamma2 + 0.5
-  
-  # Reorder columns
-  scenarios <- scenarios[, c("a", "b", "r", "rho", "gamma2", "gamma1", "H", "J")]
-  
-  # Convert to list of scenarios
-  scenarios <- lapply(seq(nrow(scenarios)), function(i) scenarios[i,])
-
-  return(scenarios)
+  scenarios <- lapply(seq_along(scenarios), function(i) {
+    scenario <- scenarios[[i]]
+    names(scenario) <- c("H", "gamma2", "rho", "a", "b", "r", "J")
+    gamma1 <- scenario["H"] + 0.5 - scenario["gamma2"]
+    
+    scenario <- as.data.frame(c(as.list(scenario), list(gamma1 = gamma1)))
+    scenario <- scenario[, c("a", "b", "r", "rho", "gamma2", "gamma1", "H", "J")]
+    row.names(scenario) <- i
+    
+    return( scenario )
+  })
 }
 
 setup_strikes_maturities <- function(config) {

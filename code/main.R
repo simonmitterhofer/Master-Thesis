@@ -22,7 +22,7 @@ cat("Using", n_cores, "cores\n")
 
 # Create config - enhanced for cluster
 config <- create_config()
-config$simulation$num_paths <- 50000  # Adapt simulation paths
+config$simulation$num_paths <- 100000  # Adapt simulation paths
 config$output$progress <- TRUE  # Adapt progress output
 
 # Create scenarios and strikes/maturities
