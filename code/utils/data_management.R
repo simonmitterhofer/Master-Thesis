@@ -169,11 +169,11 @@ save_filtered_scenarios <- function(results, analysis_df,
                                     plot_atm_skew = TRUE,
                                     plot_log_atm_skew = TRUE,
                                     # Filter settings
-                                    filter_put_call_parity = F,
-                                    filter_smile_convex = F,
-                                    filter_skew_negative = F,
-                                    filter_slope_increasing = F,
-                                    filter_skew_powerlaw_fit = F) {
+                                    filter_put_call_parity = TRUE,
+                                    filter_smile_convex = TRUE,
+                                    filter_skew_negative = TRUE,
+                                    filter_slope_increasing = TRUE,
+                                    filter_skew_powerlaw_fit = TRUE) {
   config <- results$config
   iv_matrices <- results$implied_vols
   

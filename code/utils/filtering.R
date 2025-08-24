@@ -60,7 +60,6 @@ check_atm_skew_negative <- function(iv_matrix, config) {
   
   atm_skew <- compute_atm_skew(iv_matrix, config)
   
-  # if ( (mean(atm_skew < -0.05, na.rm = TRUE) >= 0.9) && (atm_skew[min(which(!is.na(atm_skew)))] < -0.8) ) {
   if ( (mean(atm_skew < 0, na.rm = TRUE) >= 0.9) ) { 
     SkewNegative <- TRUE
   }

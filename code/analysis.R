@@ -16,7 +16,7 @@ source("utils/calibration.R")
 source("models/implied_volatility.R")
 
 # Input & output directories
-data_dir   <- "SimulationData"
+data_dir   <- "SimulationData_2025-07-27"
 output_dir <- "Analysis"
 
 # Load Simulation Results -----------------------------------
@@ -39,6 +39,17 @@ cat("1. Running scenario analysis...\n")
 
 scenario_analysis <- create_scenario_analysis(results)
 parameter_summary <- create_parameter_summary(scenario_analysis)
+parameter_summary
+
+for (param in names(parameter_summary)) {
+  # Pass/Fail vs parameter
+  mosaicplot(scenario_analysis[[param]] ~ scenario_analysis$AllPassed,
+             main  = paste0("'", param, "' vs. AllPassed"),
+             xlab  = paste0("Parameter '", param, "'"),
+             ylab  = "All Criteria Passed",
+             color = TRUE,
+             cex   = 0.8)
+}
 
 # Ensure output directory exists
 if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
