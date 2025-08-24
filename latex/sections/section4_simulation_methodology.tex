@@ -86,24 +86,28 @@ where $V_{\text{BS}}$ denotes the Black-Scholes price given the same $K$, $T$, $
 
 The inversion is carried out numerically using a root-finding algorithm, such as the bisection method, with appropriate upper and lower bounds, and convergence tolerance. To ensure robustness, option values that are near zero or very deep in-the-money are excluded from inversion, as they may lead to numerical instability.
 
+To obtain a well-behaved implied volatility surface, missing entries in the volatility matrix are interpolated along the maturity dimension, with short gaps of consecutive missing values filled by linear interpolation. In addition, empirically unrealistic regions of the strike-maturity grid, corresponding to very short maturities combined with extreme levels of moneyness where no options are typically traded, are systematically excluded. This procedure ensures that the resulting surface is continuous in its central region while remaining consistent with observed market characteristics at the boundaries.
+
 The result is a matrix of implied volatilities $\sigma_{\text{IV}}(K_l,T_q)$ that forms the simulated volatility surface. This surface serves as the primary output of the model and forms the basis for the analysis in Section~\ref{sec:SimulationResultsAnalysis}.
 
 
 \subsection{Output for Subsequent Analysis} \label{subsec:OutputSubsequentAnalysis}
 
-Each complete simulation run with $M$ Monte Carlo paths and fixed model parameters is referred to as a \emph{scenario}. A scenario is fully characterized by a specific configuration of the parameters $(J, \gamma_1, \gamma_2, \rho, a, b, r)$. The roughness parameter $H$ is not an independent input, but is determined by the relation $H = \gamma_1 + \gamma_2 - \frac{1}{2}$.
+Each complete simulation run with $M$ Monte Carlo paths and fixed model parameters is referred to as a scenario. A scenario is fully characterized by a specific configuration of the parameters $(H, \gamma_2, \rho, a, b, r, J)$. The roughness parameter $H$ is used in place of $\gamma_1$, which governs the short-term kernel behavior, since both are linked through the relation $H = \gamma_1 + \gamma_2 - \tfrac{1}{2}$ (see Equation~\eqref{eq:HurstIndex}).
 
-The output generated from a scenario consists of three main components derived from the simulated asset price paths and option pricing procedures.
+The simulation of a scenario produces three main output components derived from the generated asset price paths and subsequent option pricing.
 
-First, two matrices of option values are computed: one for European call options and one for European put options. These matrices are evaluated over a common pre-defined grid of strikes $\{K_1, \ldots, K_L\}$ and maturities $\{T_1, \ldots, T_Q\}$. Both matrices are retained to allow for consistency checks, such as verification of put-call parity.
+First, two matrices of option values are computed: one for European call options and one for European put options. These matrices are evaluated over a common pre-defined grid of strikes $\{K_1, \ldots, K_L\}$ and maturities $\{T_1, \ldots, T_Q\}$. Both are retained to allow for consistency checks, such as verification of put-call parity.
 
-Second, the option prices are transformed into implied volatilities via numerical inversion of the Black-Scholes formula, as described in Section~\ref{subsec:ImpliedVolaSurfaceComputation}. This results in two implied volatility matrices, one for calls and one for puts. These are then aggregated by computing the element-wise average, wherever both values are available. If only one implied volatility value is available (due to numerical issues), that value is used directly.
+Second, the option prices are transformed into implied volatilities via numerical inversion of the Black-Scholes formula, as described in Section~\ref{subsec:ImpliedVolaSurfaceComputation}. This yields two implied volatility matrices, one for calls and one for puts. These are then aggregated by computing the elementwise average wherever both values are available. If only one value is available due to numerical issues, it is used directly.
 
-The final output per scenario thus consists of the following elements: 
+Finally, the aggregated implied volatility surface is retained as the main object of interest. It provides the basis for evaluating the quality criteria and conducting the analyses in Section~\ref{sec:SimulationResultsAnalysis}.
+
+In summary, the simulation of a scenario delivers:
 \begin{itemize}
-    \item The list of scenario parameters $(J, \gamma_1, \gamma_2, \rho, a, b, r)$,
-    \item Two option value matrices (calls and puts), primarily used for diagnostic purposes,
-    \item One aggregated implied volatility matrix used in the subsequent analysis.
+    \item The parameter configuration $(H, \gamma_2, \rho, a, b, r, J)$,
+    \item Two option value matrices (calls and puts), primarily for diagnostic purposes,
+    \item One aggregated implied volatility matrix, used for subsequent analysis.
 \end{itemize}
 
-All matrices are computed on the same grid of strikes and maturities. This aggregated surface is the primary object used in the simulation-based analysis that follows.
+All matrices are computed on the same strikes-maturities grid. The aggregated implied volatility surface is the central output used in the simulation study.

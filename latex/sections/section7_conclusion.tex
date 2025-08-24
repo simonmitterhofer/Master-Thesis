@@ -1,1 +1,7 @@
-\section{Conclusion} \label{sec: Conclusion}
+\section{Conclusion} \label{sec:Conclusion}
+
+This thesis investigated the Hypergeometric Volatility Model as a framework for capturing key features of implied volatility surfaces observed in financial markets. A comprehensive simulation study, complemented by empirical validation using S\&P~500 option data, was conducted to evaluate the model's ability to reproduce empirical stylized facts and to identify parameter configurations that produce realistic outcomes.
+
+To assess how realistic simulated surfaces are, five quality criteria were established: put-call parity, smile convexity, negative at-the-money (ATM) skew, increasing skew term structure, and approximate power-law decay. Through the systematic analysis of over 18{,}000 parameter combinations, the influence of roughness, persistence, correlation, and volatility scaling parameters on surface quality was examined. The results identified several key parameter ranges for optimal performance: roughness indices $H$ between $0.10$ and $0.25$, correlation parameters $\rho$ in the range $[-0.6, -0.2]$, and volatility scale values $a$ below $1.4$. While these parameters showed the strongest effects, careful selection of base volatility and persistence parameters remained important for achieving realistic dynamics.
+
+The overall success rate across all parameter configurations was $54\%$. Individual criteria showed varying performance levels, with put-call parity satisfied in $93\%$ of cases and negative skew in $99\%$ of cases, while smile convexity proved more challenging at $66\%$. This analysis provides practical guidance for model implementation by identifying parameter regions that consistently produce market-realistic outcomes.
