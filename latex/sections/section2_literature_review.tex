@@ -27,17 +27,17 @@ These empirical and theoretical findings have motivated the development of new v
 
 \subsection{Modern Volatility Models} \label{subsec:ModernVolModels}
 
-To incorporate roughness and long memory into volatility modeling, several new models have been proposed.
+To incorporate roughness and long memory into volatility modeling, several new models have been proposed. These approaches differ in how they capture the time-series properties of volatility and in the extent to which they reproduce key features of implied volatility surfaces.
 
-\citet{GatheralJaissonRosenbaum2018} introduce the Rough Fractional Stochastic Volatility (RFSV) model, where log-volatility follows a fractional Ornstein-Uhlenbeck process driven by fractional Brownian motion with Hurst parameter $H < 0.5$. This specification successfully captures both short-term roughness and the power-law decay of the ATM skew observed in market data.
+\citet{GatheralJaissonRosenbaum2018} introduce the Rough Fractional Stochastic Volatility (RFSV) model, where log-volatility follows a fractional Ornstein-Uhlenbeck process driven by fractional Brownian motion with Hurst parameter $H < 0.5$. This specification generates rough sample paths with long-memory characteristics. In option markets, it reproduces the empirically observed power-law decay of the at-the-money skew.
 
-The Rough Heston model by \citet{ElEuchRosenbaum2019} extends the classical Heston framework by incorporating a fractional kernel in the volatility dynamics. While the model is no longer Markovian, it still allows for semi-closed-form characteristic functions, making it suitable for European option pricing.
+The Rough Heston model by \citet{ElEuchRosenbaum2019} extends the classical Heston framework by incorporating a fractional kernel in the volatility dynamics. This introduces roughness into the variance process. Although the model is no longer Markovian, it still allows for semi-closed-form characteristic functions, making it suitable for European option pricing.
 
-Other generalizations include affine Volterra processes and affine rough volatility models, such as those in \citet{AbiJaberLarssonPulido2019}. These models incorporate memory effects by modeling volatility through stochastic convolution equations.
+Other generalizations include affine Volterra processes and affine rough volatility models, such as those in \citet{AbiJaberLarssonPulido2019}. Their contribution lies in flexibly capturing memory effects through stochastic convolution equations, while for option pricing they retain affine structures that facilitate tractable computations.
 
-\citet{BennedsenLundePakkanen2021} advocate the use of the Brownian semistationary (BSS) framework, which constructs volatility processes as convolution integrals of Brownian motion with deterministic kernels. The BSS approach offers a flexible structure for modeling volatility, allowing one to model both roughness and persistence through appropriate kernel specifications.
+\citet{BennedsenLundePakkanen2021} propose the Brownian semistationary (BSS) framework, which specifies volatility as a convolution integral of Brownian motion with deterministic kernels. This approach provides a flexible structure for modeling the time-series properties of volatility, as the kernel can be adjusted to capture both roughness and persistence.
 
-Extending the convolution-based approach, \citet{Damian2021} introduces the Hypergeometric Volatility Model, which employs a hypergeometric mixing measure to define the convolution kernel. This construction yields a volatility process driven by a latent signal that enables control over both roughness and memory parameters. The hypergeometric framework serves as the basis for the analysis in this thesis and is presented in detail in Section~\ref{sec:ModelingFramework}.
+Extending the convolution-based approach, \citet{Damian2021} introduces the Hypergeometric Volatility Model, which employs a hypergeometric mixing measure to define the convolution kernel. This structure gives explicit control over both short- and long-term dependencies in volatility dynamics. From an option-pricing perspective, the model can generate implied volatility surfaces with realistic skews and smile convexity. The hypergeometric framework serves as the basis for the analysis in this thesis and is presented in detail in Section~\ref{sec:ModelingFramework}.
 
 
 \subsection{Simulation and Approximation Methods} \label{subsec:SimulationApproximation}

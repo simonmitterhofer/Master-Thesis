@@ -8,7 +8,7 @@ A mean implied volatility surface is constructed on a fixed moneyness-maturity g
 \subsection{Empirical Volatility Surface} \label{subsec:EmpiricalVolatilitySurface}
 
 \subsubsection*{Data Collection and Preparation}
-S\&P~500 option data for March 2023 were obtained from the OptionMetrics database via WRDS. The dataset contains implied volatilities, strike prices, and expiration dates for listed equity index options.
+S\&P~500 option data for March 2023 were obtained from the OptionMetrics database via WRDS. The dataset includes implied volatilities, strike prices, and expiration dates for listed equity index options.
 
 Data cleaning was performed to remove extreme or invalid entries. Excluded were:
 \begin{itemize}
@@ -16,9 +16,17 @@ Data cleaning was performed to remove extreme or invalid entries. Excluded were:
     \item Maturities longer than three years,
     \item Extremely deep in- or out-of-the-money options.
 \end{itemize}
-After cleaning, the dataset contained approximately 373{,}000 observations between March 1 and March 31, 2023. Maturities range from 1 day to 3 years, and strikes cover a wide span of moneyness values from $K/S = 0.3$ to $K/S = 3.1$. This provides a broad cross-section of the implied volatility surface across both short and long maturities.
+After cleaning, the dataset contained approximately 373{,}000 observations from March 1 to March 31, 2023. Maturities range from 1 day to 3 years, and strikes cover a wide range of moneyness values from $K/S = 0.3$ to $K/S = 3.1$. This provides a broad cross-section of the implied volatility surface across both short and long maturities.
 
-Strike prices were converted to moneyness using the ratio $K/S$, and maturities were expressed in years. The data were binned onto a discrete moneyness-maturity grid, averaged within bins, and interpolated linearly. The resulting empirical surface was evaluated on the same grid of strikes and maturities used in Section~\ref{sec:SimulationResultsAnalysis}, with 15 maturities between 1 day and 3 years and 17 moneyness levels between $K/S = 0.5$ and $K/S = 2.0$. This alignment ensures that simulated and empirical surfaces can be compared pointwise without extrapolation.
+Strike prices were converted to moneyness using the ratio $K/S$, and maturities were expressed in years. The data were binned onto a discrete moneyness-maturity grid, averaged within bins, and interpolated linearly. The resulting surface was evaluated on the same grid used in Section~\ref{sec:SimulationResultsAnalysis}, consisting of 17 moneyness levels
+\begin{equation*}
+    \{0.5,\, 0.7,\, 0.8,\, 0.9,\, 0.95,\, 0.975,\, 0.99,\, 0.995,\, 1,\, 1.005,\, 1.01,\, 1.025,\, 1.05,\, 1.1,\, 1.2,\, 1.4,\, 2\}
+\end{equation*}
+and 15 maturities (in trading days)
+\begin{equation*}
+    \{1,\, 2,\, 3,\, 5,\, 10,\, 15,\, 21,\, 42,\, 63,\, 84,\, 126,\, 252,\, 378,\, 504,\, 756\},
+\end{equation*}
+assuming 252 trading days per year. This grid yields 255 evaluation points at which empirical and simulated implied volatilities are compared directly, so that no additional interpolation is required during calibration.
 
 \subsubsection*{Evaluation of Quality Criteria}
 The empirical surface satisfies all four simulation quality criteria that can be evaluated based on implied volatilities. The put-call parity criterion cannot be tested, since OptionMetrics provides implied volatilities but not raw option prices.
@@ -39,12 +47,12 @@ Figure~\ref{fig:MarketSurface} and the associated diagnostics (volatility smiles
 \subsection{Calibration to Market Data}
 
 \subsubsection*{Calibration Methodology}
-Calibration was carried out to assess how closely the simulated scenarios reproduce the empirical volatility surface described in Section~\ref{subsec:EmpiricalVolatilitySurface}. Each of the 18{,}225 parameter configurations from Section~\ref{subsec:SuccessRateAnalysis} was considered. For each configuration, the corresponding simulated surface was compared pointwise to the market surface on the predefined strikes-maturities grid. The goodness of fit was measured using the Mean Squared Error (MSE):
+The calibration was performed using a grid search approach. All 18{,}225 parameter configurations from the simulation study in Section~\ref{subsec:SuccessRateAnalysis} were evaluated through comparison of their simulated volatility surfaces with the empirical market surface from Section~\ref{subsec:EmpiricalVolatilitySurface}. For each scenario, the goodness of fit was assessed by the Mean Squared Error (MSE) computed over the predefined strikes-maturities grid:
 \begin{equation}
-    \text{MSE} = \frac{1}{N} \sum_{i=1}^{N} \left( \sigma_{\text{model}}^{(i)} - \sigma_{\text{market}}^{(i)} \right)^2,
+    \text{MSE} = \frac{1}{N} \sum_{i=1}^{N} \left( \sigma_{\text{model}}^{(i)} - \sigma_{\text{market}}^{(i)} \right)^2,    
 \end{equation}
-where $\sigma_{\text{model}}^{(i)}$ and $\sigma_{\text{market}}^{(i)}$ denote the model-implied and market-implied volatilities at grid point $i$, and $N$ is the number of valid data points.  
-The parameter set with the lowest MSE was identified as the best fit to the market surface.
+where $\sigma_{\text{model}}^{(i)}$ and $\sigma_{\text{market}}^{(i)}$ denote the model-implied and market-implied volatilities at grid point $i$, and $N$ is the total number of grid points with valid data. The parameter set yielding the lowest MSE was identified as the best fit to the market surface.
+
 
 \subsubsection*{Best Fit Parameter Set}
 The configuration minimizing the MSE is

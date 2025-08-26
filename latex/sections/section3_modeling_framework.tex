@@ -17,7 +17,7 @@ Following \citet{BennedsenLundePakkanen2021}, the volatility is modeled as an ex
 \end{equation}
 where $b > 0$ is the base volatility level and $a > 0$ is a volatility scale parameter. The term $\bar{\sigma}_X$ denotes the long-term standard deviation of the signal and serves as a normalization factor. The correction term $-a^2/2$ centers the volatility level, so that $\mathbb{E}[\lambda(X_t)] \approx b$ under the stationary distribution of $X_t$.
 
-This specification ensures strictly positive volatility and allows for occasional large spikes. The parameters $a$ and $b$ separately control the volatility’s fluctuation scale and long-term level.
+This specification ensures strictly positive volatility and allows for occasional large spikes. The parameters $a$ and $b$ separately control the volatility's fluctuation scale and long-term level.
 
 
 \subsection{Signal Process} \label{subsec:SignalProcess}
@@ -31,29 +31,44 @@ where $B$ is a standard Brownian motion and $h: \mathbb{R}_+ \to \mathbb{R}$ is 
 The kernel $h$ is specified as the Laplace transform of a non-negative mixing measure $\mu$:
 \begin{align}
     h(u) &= \int_0^\infty e^{-x u} \mu(x) \,\mathrm{d}x, \label{eq:Kernel}\\
-    \mu(x) &= (1+x)^{-\gamma_1} x^{-\gamma_2}, \quad \gamma_1, \gamma_2 > 0. \label{eq:Measure}
+    \mu(x) &= (1+x)^{-\gamma_1} x^{-\gamma_2}, \quad 
+    \gamma_1, \gamma_2 > 0. \label{eq:Measure}
 \end{align}
-The parameters $\gamma_1$ and $\gamma_2$ control the short- and long-term behavior of the kernel. Larger values of $\gamma_2$ increase persistence, while for fixed $\gamma_2$, lower values of $\gamma_1$ result in greater roughness.
- 
-As shown in \citet{CarmonaCoutin1998}, stochastic convolutions with Laplace-type kernels can be represented as infinite mixtures of Ornstein-Uhlenbeck (OU) processes. By Fubini’s theorem, the signal process can be rewritten as
-\begin{equation} \label{eq:Signal}
-    X_t = \int_0^\infty Z_t^{(x)} \mu(x) \,\mathrm{d}x, \quad \text{where } Z_t^{(x)} := \int_0^t e^{-x(t-s)} \,\mathrm{d}B_s.
+For the process to exhibit well-defined roughness and persistence properties, the parameters must satisfy the restrictions
+\begin{equation} \label{eq:Restrictions}
+    \gamma_2 < \tfrac{1}{2}, 
+    \qquad 
+    \tfrac{1}{2} < \gamma_1 + \gamma_2 < 1.
 \end{equation}
-Each $Z_t^{(x)}$ is an OU process with mean-reversion speed $x$ and is driven by the common Brownian motion $B$.
+The parameters $\gamma_1$ and $\gamma_2$ jointly control the short- and long-term behavior of the kernel. Larger values of $\gamma_2$ increase persistence, while for fixed $\gamma_2$, smaller values of $\gamma_1$ correspond to greater roughness. The formal link between these parameters and the Hurst index is derived in Section~\ref{subsec:RoughnessLongMemory}.
+ 
+As shown in \citet{CarmonaCoutin1998}, stochastic convolutions with Laplace-type kernels can be represented as infinite mixtures of Ornstein-Uhlenbeck (OU) processes. By Fubini's theorem, the signal process can be rewritten as
+\begin{equation} \label{eq:Signal}
+    X_t = \int_0^\infty Z_t^{(x)} \mu(x) \,\mathrm{d}x, 
+    \qquad 
+    Z_t^{(x)} := \int_0^t e^{-x(t-s)} \,\mathrm{d}B_s,
+\end{equation}
+where each $Z_t^{(x)}$ is an OU process with mean-reversion speed $x$ driven by the common Brownian motion $B$.
 
 
 \subsection{Roughness and Long Memory} \label{subsec:RoughnessLongMemory}
 
-The small- and large-time behavior of the kernel $h(u)$ determines the roughness and persistence of the signal process $X$. Using the substitution $y = x u$, the kernel admits the asymptotic behavior:
+The small- and large-time behavior of the kernel $h(u)$ determines the roughness and persistence of the signal process $X$. Following the derivation in \citet{Damian2021}, and using the substitution $y = xu$, the kernel admits the asymptotic behavior
 \begin{align} \label{eq:KernelAsymptotics}
     h(u) &\sim u^{\gamma_1 + \gamma_2 - 1}, \quad u \to 0, \\
     h(u) &\sim u^{\gamma_2 - 1}, \quad u \to \infty.
 \end{align}
-Hence, following \citet{BennedsenLundePakkanen2021}, the process $X$ exhibits rough paths if its Hurst index
+
+Based on these asymptotics, the path properties of $X$ can be characterized using the results of \citet{BennedsenLundePakkanen2021}. Proposition~2.1 in their paper shows that the process exhibits rough paths if its Hurst index
 \begin{equation} \label{eq:HurstIndex}
     H := \gamma_1 + \gamma_2 - \tfrac{1}{2}
 \end{equation}
-lies in $(0, \tfrac{1}{2})$, resulting in sample paths that are rougher than standard Brownian motion. Long memory is implied when $h(u)$ decays slowly as $u \to \infty$.
+satisfies $0 < H < \tfrac{1}{2}$. In this case, the sample paths are rougher than standard Brownian motion. 
+
+Similarly, Proposition~2.2 establishes that the process exhibits long memory if $0 < \gamma_2 < \tfrac{1}{2}$, since the kernel $h(u)$ then decays slowly as $u \to \infty$. This condition is precisely the one imposed on the parameter range in Section~\ref{subsec:SignalProcess}. Together, these results provide the formal link between the parameterization of the hypergeometric kernel and the roughness and persistence properties of the signal process.
+
+
+
 
 
 \subsection{Finite-Dimensional Approximation} \label{subsec:FiniteDimApprox}
