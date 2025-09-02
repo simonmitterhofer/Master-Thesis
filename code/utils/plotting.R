@@ -16,22 +16,31 @@ plot_vol_surface <- function(iv_matrix, scenario, config) {
   
   par(mfrow = c(1,1))
   
-  persp(log(moneyness), maturities, t(iv_matrix),
-        theta = 40, phi = 20,
-        expand = 0.5,
-        box = TRUE,
-        col = "lightblue",
-        border = "darkblue",
-        lwd = 0.5,
-        xlab = "Log-Moneyness",
-        ylab = "Time to Maturity",
-        zlab = "Implied Volatility",
-        zlim = c(0, 1),
-        ticktype = "detailed",
-        main = paste("Implied Volatility Surface", title_sub, sep = "\n"),
-        cex.main = 1.2,
-        cex.lab = 0.8,
-        cex.axis = 0.6)
+  pmat <- persp(log(moneyness), maturities, t(iv_matrix),
+                theta = 40, phi = 20,
+                expand = 0.6,
+                box = TRUE,
+                col = "lightblue",
+                border = "darkblue",
+                lwd = 0.5,
+                xlab = "Log-Moneyness",
+                ylab = "Time to Maturity",
+                zlab = "Implied Volatility",
+                zlim = c(0, 1),
+                ticktype = "detailed",
+                main = paste("Implied Volatility Surface", title_sub, sep = "\n"),
+                cex.main = 1.2,
+                cex.lab = 0.8,
+                cex.axis = 0.6)
+  
+  # background lines (back/left)
+  for (z in seq(0.2,0.8,0.2)) {
+    lines(trans3d(min(log(moneyness)), range(maturities), z, pmat), lty=3, col="#00000030")
+    lines(trans3d(range(log(moneyness)), max(maturities), z, pmat), lty=3, col="#00000030")
+    lines(trans3d(max(log(moneyness)), range(maturities), z, pmat), lty=3, col="#00000030")
+    lines(trans3d(range(log(moneyness)), min(maturities), z, pmat), lty=3, col="#00000030")
+  }
+  
 }
 
 # Plot volatility smiles

@@ -16,7 +16,7 @@ source("utils/calibration.R")
 source("models/implied_volatility.R")
 
 # Input & output directories
-data_dir   <- "SimulationData_2025-07-27"
+data_dir   <- "SimulationData"
 output_dir <- "Analysis"
 
 # Load Simulation Results -----------------------------------
