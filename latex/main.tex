@@ -18,6 +18,7 @@
 \usepackage{amsfonts}
 \usepackage{booktabs}
 \usepackage{hyperref}
+\usepackage{array}
 \usepackage{url}
 \usepackage[toc,page]{appendix}
 \usepackage[round]{natbib}
@@ -65,20 +66,21 @@
 
 \newpage
 
-\include{sections/section0_abstract}
+\include{sections/abstract}
+\include{sections/acknowledgements}
+
 \tableofcontents
-\include{sections/section1_introduction}
-\include{sections/section2_literature_review}
-\include{sections/section3_modeling_framework}
-\include{sections/section4_simulation_methodology}
-\include{sections/section5_results_analysis}
-\include{sections/section6_empirical_validation}
-\include{sections/section7_conclusion}
+\include{sections/1_introduction}
+\include{sections/2_literature_review}
+\include{sections/3_modeling_framework}
+\include{sections/4_simulation_methodology}
+\include{sections/5_results_analysis}
+\include{sections/6_empirical_validation}
+\include{sections/7_conclusion}
 
 \appendix
-\include{appendix/figures}
-\include{appendix/tables}
-\include{appendix/references}
-
+\include{appendix/A_figures}
+\include{appendix/B_tables}
+\include{appendix/C_references}
 
 \end{document}

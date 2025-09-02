@@ -1,0 +1,114 @@
+\section{Modeling Framework} \label{sec:ModelingFramework}
+
+This section presents the mathematical framework of the Hypergeometric Volatility Model. The model describes a risk-neutral asset price process with stochastic volatility driven by a latent signal process. The volatility dynamics are designed to capture both roughness and long memory. The framework is developed by first specifying the asset price and volatility model, then introducing the signal process, and finally describing its approximation and normalization.
+
+
+\subsection{Asset Price and Volatility Model} \label{subsec:AssetPriceVolatilityModel}
+
+Consider a financial market with a constant risk-free interest rate $r > 0$ and a non-dividend-paying risky asset $S$. The asset price is modeled as a stochastic process $S = \{S_t\}_{0 \leq t \leq T}$. Under the risk-neutral measure, its dynamics are given by the stochastic differential equation
+\begin{equation} \label{eq:AssetSDE}
+    \mathrm{d} S_t = r S_t \,\mathrm{d}t + \lambda(X_t) S_t \,\mathrm{d}W_t,
+\end{equation}
+where $W$ is a standard Brownian motion and $\lambda(X_t)$ denotes the stochastic volatility process.
+
+Following \citet{BennedsenLundePakkanen2021}, the volatility is modeled as an exponential function of a latent signal process $X = \{X_t\}_{0 \leq t \leq T}$:
+\begin{equation} \label{eq:Volatility}
+    \lambda(X_t) = b \cdot \exp \left( a \cdot \frac{X_t}{\bar{\sigma}_X} - \frac{a^2}{2} \right),
+\end{equation}
+where $b > 0$ is the base volatility level and $a > 0$ is a volatility scale parameter. The term $\bar{\sigma}_X$ denotes the long-term standard deviation of the signal and serves as a normalization factor. The correction term $-a^2/2$ centers the volatility level, so that $\mathbb{E}[\lambda(X_t)] \approx b$ under the stationary distribution of $X_t$.
+
+This specification ensures strictly positive volatility and allows for occasional large spikes. The parameters $a$ and $b$ separately control the volatility's fluctuation scale and long-term level.
+
+
+\subsection{Signal Process} \label{subsec:SignalProcess}
+
+The latent signal process $X$ introduces roughness and persistence into the volatility dynamics. It is defined as a stochastic Volterra process \citep{AbiJaberLarssonPulido2019} of the form
+\begin{equation} \label{eq:StochInt}
+    X_t = \int_0^t h(t-s) \, \mathrm{d}B_s,
+\end{equation}
+where $B$ is a standard Brownian motion and $h: \mathbb{R}_+ \to \mathbb{R}$ is a deterministic kernel function.
+
+The kernel $h$ is specified as the Laplace transform of a non-negative mixing measure $\mu$:
+\begin{align}
+    h(u) &= \int_0^\infty e^{-x u} \mu(x) \,\mathrm{d}x, \label{eq:Kernel}\\
+    \mu(x) &= (1+x)^{-\gamma_1} x^{-\gamma_2}, \quad 
+    \gamma_1, \gamma_2 > 0. \label{eq:Measure}
+\end{align}
+For the process to exhibit well-defined roughness and persistence properties, the parameters must satisfy the restrictions
+\begin{equation} \label{eq:Restrictions}
+    \gamma_2 < \tfrac{1}{2}, 
+    \qquad 
+    \tfrac{1}{2} < \gamma_1 + \gamma_2 < 1.
+\end{equation}
+The parameters $\gamma_1$ and $\gamma_2$ jointly control the short- and long-term behavior of the kernel. Larger values of $\gamma_2$ increase persistence, while for fixed $\gamma_2$, smaller values of $\gamma_1$ correspond to greater roughness. The formal link between these parameters and the Hurst index is derived in Section~\ref{subsec:RoughnessLongMemory}.
+ 
+As shown in \citet{CarmonaCoutin1998}, stochastic convolutions with Laplace-type kernels can be represented as infinite mixtures of Ornstein-Uhlenbeck (OU) processes. By Fubini's theorem, the signal process can be rewritten as
+\begin{equation} \label{eq:Signal}
+    X_t = \int_0^\infty Z_t^{(x)} \mu(x) \,\mathrm{d}x, 
+    \qquad 
+    Z_t^{(x)} := \int_0^t e^{-x(t-s)} \,\mathrm{d}B_s,
+\end{equation}
+where each $Z_t^{(x)}$ is an OU process with mean-reversion speed $x$ driven by the common Brownian motion $B$.
+
+
+\subsection{Roughness and Long Memory} \label{subsec:RoughnessLongMemory}
+
+The small- and large-time behavior of the kernel $h(u)$ determines the roughness and persistence of the signal process $X$. Following the derivation in \citet{Damian2021}, and using the substitution $y = xu$, the kernel admits the asymptotic behavior
+\begin{align} \label{eq:KernelAsymptotics}
+    h(u) &\sim u^{\gamma_1 + \gamma_2 - 1}, \quad u \to 0, \\
+    h(u) &\sim u^{\gamma_2 - 1}, \quad u \to \infty.
+\end{align}
+
+Based on these asymptotics, the path properties of $X$ can be characterized using the results of \citet{BennedsenLundePakkanen2021}. Proposition~2.1 in their paper shows that the process exhibits rough paths if its Hurst index
+\begin{equation} \label{eq:HurstIndex}
+    H := \gamma_1 + \gamma_2 - \tfrac{1}{2}
+\end{equation}
+satisfies $0 < H < \tfrac{1}{2}$. In this case, the sample paths are rougher than standard Brownian motion. 
+
+Similarly, Proposition~2.2 establishes that the process exhibits long memory if $0 < \gamma_2 < \tfrac{1}{2}$, since the kernel $h(u)$ then decays slowly as $u \to \infty$. This condition is precisely the one imposed on the parameter range in Section~\ref{subsec:SignalProcess}. Together, these results provide the formal link between the parameterization of the hypergeometric kernel and the roughness and persistence properties of the signal process.
+
+
+
+
+
+\subsection{Finite-Dimensional Approximation} \label{subsec:FiniteDimApprox}
+
+The infinite-dimensional representation in \eqref{eq:Signal} is approximated by a finite sum of $J$ OU processes. Following \citet{CarmonaCoutinMontseny2000}, the signal is approximated by
+\begin{equation} \label{eq:FiniteApprox}
+    X_t^{(J)} = \sum_{j=1}^J c_j Z_t^{(j)},
+\end{equation}
+where each $Z_t^{(j)}$ solves the SDE
+\begin{equation}
+    \mathrm{d} Z_t^{(j)} = -\kappa_j Z_t^{(j)} \,\mathrm{d}t + \mathrm{d}B_t, \quad Z_0^{(j)} = 0.
+\end{equation}
+The weights $c_j$ and mean-reversion rates $\kappa_j$ are computed from a partition of the positive real line:
+\begin{align}
+    c_j &= \int_{\xi_{j-1}}^{\xi_j} \mu(x) \,\mathrm{d}x, \label{eq:OUWeights} \\
+    \kappa_j &= \frac{\int_{\xi_{j-1}}^{\xi_j} x \mu(x) \,\mathrm{d}x}{\int_{\xi_{j-1}}^{\xi_j} \mu(x) \,\mathrm{d}x}. \label{eq:OUSpeeds}
+\end{align}
+This representation makes the process $X_t^{(J)}$ Markovian in $\mathbb{R}^J$, enabling efficient simulation.
+
+To construct the partition $0 < \xi_0 < \xi_1 < \cdots < \xi_J < \infty$, \citet{DamianFrey2024} propose a geometric scheme:
+\begin{align}
+    \xi_0 &= J^{-2\alpha}, \quad \xi_J = J^{4 - 2\alpha}, \\
+    q &= \left( \frac{\xi_J}{\xi_0} \right)^{1/J}, \quad \text{so that } \xi_j = \xi_0 q^j,
+\end{align}
+where $\alpha = H + \tfrac{1}{2}$ is related to the process roughness. This choice ensures that each partition interval $[\xi_{j-1}, \xi_j]$ contains equal mass under the mixing measure $\mu$.
+
+
+\subsection{Long-Term Variance} \label{subsec:LongTermVariance}
+
+To normalize the volatility in \eqref{eq:Volatility}, the long-term variance of the signal process is computed. Since $X_t$ is centered, its variance is
+\begin{equation} \label{eq:SignalVariance}
+    \mathrm{Var}[X_t] = \int_0^t h^2(u) \,\mathrm{d}u = \iint_{(0,\infty)^2} \frac{1 - e^{-(x+y)t}}{x + y} \mu(x)\mu(y) \,\mathrm{d}x \,\mathrm{d}y.
+\end{equation}
+As $t \to \infty$, the process becomes stationary with limiting variance
+\begin{equation}
+    \bar{\sigma}_X^2 := \lim_{t \to \infty} \mathrm{Var}[X_t] = \iint_{(0,\infty)^2} \frac{1}{x + y} \mu(x)\mu(y) \,\mathrm{d}x \,\mathrm{d}y.
+\end{equation}
+
+In the finite-dimensional case, the long-term variance of $X_t^{(J)}$ is
+\begin{equation}
+    \bar{\sigma}_{X,J}^2 := \lim_{t \to \infty} \mathrm{Var} \left[ \sum_{j=1}^J c_j Z_t^{(j)} \right] = \sum_{i=1}^J \sum_{j=1}^J \frac{c_i c_j}{\kappa_i + \kappa_j}.
+\end{equation}
+This variance is used to normalize the signal in \eqref{eq:Volatility}, ensuring comparability across parameter choices and discretization levels.

@@ -1,0 +1,89 @@
+\section{Tables} \label{sec:Tables}
+
+\subsection*{B.1\quad Success Rate Analysis Results}
+
+\begin{table}[h!]
+    \centering
+    \small
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{c|cccccc}
+    \toprule
+    Parameter & Put-Call Parity & Smile Convexity & Skew Negative & Skew Increasing & Skew Power Law & All \\
+    \midrule
+    \multicolumn{7}{c}{$H$} \\
+    $0.05$ & 84\% & 67\% & 99\% & 100\% & 77\% & 58\% \\
+    $0.10$ & 87\% & 71\% & 99\% & 100\% & 76\% & 60\% \\
+    $0.15$ & 90\% & 71\% & 100\% & 100\% & 74\% & 61\% \\
+    $0.20$ & 92\% & 69\% & 100\% & 99\% & 73\% & 60\% \\
+    $0.25$ & 94\% & 69\% & 99\% & 97\% & 73\% & 59\% \\
+    $0.30$ & 96\% & 66\% & 99\% & 95\% & 71\% & 56\% \\
+    $0.35$ & 97\% & 63\% & 99\% & 93\% & 69\% & 51\% \\
+    $0.40$ & 98\% & 60\% & 99\% & 91\% & 65\% & 45\% \\
+    $0.45$ & 99\% & 58\% & 99\% & 90\% & 57\% & 38\% \\
+    \midrule
+    \multicolumn{7}{c}{$\gamma_2$} \\
+    $0.05$ & 90\% & 67\% & 99\% & 98\% & 70\% & 55\% \\
+    $0.10$ & 91\% & 67\% & 99\% & 97\% & 70\% & 55\% \\
+    $0.15$ & 92\% & 66\% & 99\% & 97\% & 70\% & 55\% \\
+    $0.20$ & 92\% & 66\% & 99\% & 96\% & 70\% & 55\% \\
+    $0.25$ & 93\% & 66\% & 99\% & 96\% & 71\% & 55\% \\
+    $0.30$ & 94\% & 66\% & 99\% & 96\% & 70\% & 54\% \\
+    $0.35$ & 95\% & 66\% & 99\% & 95\% & 71\% & 54\% \\
+    $0.40$ & 96\% & 65\% & 99\% & 95\% & 71\% & 53\% \\
+    $0.45$ & 96\% & 64\% & 99\% & 95\% & 71\% & 52\% \\
+    \midrule
+    \multicolumn{7}{c}{$\rho$} \\
+    $-0.8$ & 100\% & 11\% & 100\% & 100\% & 85\% & 11\% \\
+    $-0.7$ & 100\% & 57\% & 100\% & 100\% & 85\% & 57\% \\
+    $-0.6$ & 98\% & 73\% & 100\% & 100\% & 84\% & 73\% \\
+    $-0.5$ & 97\% & 75\% & 100\% & 100\% & 83\% & 73\% \\
+    $-0.4$ & 95\% & 74\% & 100\% & 100\% & 82\% & 74\% \\
+    $-0.3$ & 92\% & 74\% & 100\% & 100\% & 80\% & 73\% \\
+    $-0.2$ & 89\% & 75\% & 100\% & 100\% & 76\% & 72\% \\
+    $-0.1$ & 86\% & 76\% & 100\% & 100\% & 58\% & 55\% \\
+    $0.0$  & 82\% & 77\% & 93\% & 65\% & 0\%  & 0\% \\
+    \midrule
+    \multicolumn{7}{c}{$a$} \\
+    $0.5$ & 100\% & 85\% & 97\% & 99\% & 83\% & 68\% \\
+    $0.7$ & 100\% & 84\% & 99\% & 96\% & 86\% & 70\% \\
+    $1.0$ & 100\% & 83\% & 100\% & 95\% & 87\% & 71\% \\
+    $1.4$ & 96\%  & 75\% & 100\% & 95\% & 83\% & 61\% \\
+    $2.0$ & 70\%  & 2\%  & 100\% & 96\% & 13\% & 1\% \\
+    \midrule
+    \multicolumn{7}{c}{$b$} \\
+    $0.10$ & 98\% & 52\% & 100\% & 95\% & 66\% & 42\% \\
+    $0.15$ & 96\% & 65\% & 100\% & 96\% & 68\% & 54\% \\
+    $0.20$ & 93\% & 69\% & 100\% & 96\% & 69\% & 58\% \\
+    $0.25$ & 91\% & 71\% & 99\%  & 97\% & 72\% & 58\% \\
+    $0.30$ & 88\% & 72\% & 97\%  & 97\% & 77\% & 58\% \\
+    \midrule
+    \multicolumn{7}{c}{$r$} \\
+    $0.02$ & 93\% & 66\% & 99\% & 96\% & 70\% & 54\% \\
+    \midrule
+    \multicolumn{7}{c}{$J$} \\
+    $20$ & 93\% & 66\% & 99\% & 96\% & 70\% & 54\% \\
+    \bottomrule
+    \end{tabular}
+    \caption{Success Rates Across Parameter Values}
+\end{table}
+
+
+\subsection*{B.2\quad Optimal Parameter Ranges}
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{lcc}
+        \toprule
+        Parameter & Optimal Range & Notes \\
+        \midrule
+        Roughness index $H$ & $[0.10,\,0.25]$ & Best trade-off across criteria \\
+        Persistence $\gamma_2$ & Stable across $[0.05,\,0.45]$ & Slightly better for smaller values \\
+        Correlation $\rho$ & $[-0.6,\,-0.2]$ & Negative correlation required \\
+        Volatility scale $a$ & $[0.7,\,1.0]$ & Instability for $a > 1.4$ \\
+        Base volatility $b$ & $[0.20,\,0.30]$ & Higher $b$ improves convexity \\
+        \bottomrule
+    \end{tabular}
+    \caption{Optimal parameter ranges identified in the simulation study (Section~\ref{subsec:SuccessRateAnalysis}).}
+    \label{tab:OptimalRanges}
+\end{table}
