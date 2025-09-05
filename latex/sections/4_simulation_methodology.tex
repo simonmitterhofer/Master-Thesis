@@ -10,9 +10,9 @@ The model presented in Section~\ref{sec:ModelingFramework} is defined in continu
 The simulation requires two Brownian motions: $B$, which drives the volatility signal, and $W$, which drives the asset price. These are modeled as correlated processes to reflect the leverage effect commonly observed in financial markets. At each time step $t_i$, correlated Brownian motion increments $(\Delta B_i, \Delta W_i)$ are generated such that $\mathrm{Cov}(\Delta B_{t_i}, \Delta W_{t_i}) = \rho \cdot \Delta t$.
 
 This is achieved by drawing two independent standard normal random variables $\varepsilon_i$ and $\eta_i$ at each time step. Then the discrete Brownian increments are
-\begin{align} \label{eq:BrownianMotions}
-    \Delta B_{t_i} &= \sqrt{\Delta t} \cdot \varepsilon_i, \\
-    \Delta W_{t_i} &= \rho \cdot \Delta B_{t_i} + \sqrt{1 - \rho^2} \cdot \sqrt{\Delta t} \cdot \eta_i.
+\begin{align}
+    \Delta B_{t_i} &= \sqrt{\Delta t} \cdot \varepsilon_i, \label{eq:BrownianMotions1} \\
+    \Delta W_{t_i} &= \rho \cdot \Delta B_{t_i} + \sqrt{1 - \rho^2} \cdot \sqrt{\Delta t} \cdot \eta_i. \label{eq:BrownianMotions2}
 \end{align}
 This is repeated at each of the $N$ time points.
 
@@ -46,7 +46,7 @@ The entire volatility path ${\lambda(X_{t_i})}_{i=0}^N$ is computed prior to ass
 
 \subsection{Simulation of the Asset Price Process} \label{subsec:SimAssetPriceProcess}
 
-Given the discrete-time volatility path and the correlated Brownian motion increments from Equation~\eqref{eq:BrownianMotions}, the asset price process is simulated using a log-Euler scheme under the risk-neutral measure. The log-return over each time step is given by
+Given the discrete-time volatility path and the correlated Brownian motion increments from Equations~\eqref{eq:BrownianMotions1}-\eqref{eq:BrownianMotions2}, the asset price process is simulated using a log-Euler scheme under the risk-neutral measure. The log-return over each time step is given by
 \begin{equation} \label{eq:TimeDiscrLogReturn}
     \log\left( \frac{S_{t_{i+1}}}{S_{t_i}} \right) = \left( r - \frac{1}{2} \lambda(X_{t_i})^2 \right) \Delta t + \lambda(X_{t_i}) \cdot \Delta W_{t_i},
 \end{equation}

@@ -1,6 +1,6 @@
 \section{Simulation Results and Analysis} \label{sec:SimulationResultsAnalysis}
 
-This section presents the analysis of the simulation results. A simulated scenario is considered successful if the resulting implied volatility surface satisfies all five quality criteria. These criteria are motivated by empirical stylized facts observed in financial markets and are designed to assess whether a simulated surface can be regarded as realistic.
+This section presents the analysis of the simulation results. A simulated scenario is considered successful if the resulting implied volatility surface satisfies all five quality criteria introduced in Section~\ref{subsec:SimulationQualityCriteria}. These criteria are motivated by empirical stylized facts observed in financial markets and are designed to assess whether a simulated surface can be regarded as realistic.
 
 First, the quality criteria are formally defined. Next, a ceteris paribus analysis is conducted to isolate the effect of individual model parameters. Finally, the simulation output is evaluated across a broad set of parameter constellations, and parameter ranges with high success rates are identified.
 
@@ -163,6 +163,8 @@ The stability of the simulation depends on the level of approximation of the sig
 \end{figure}
 \end{minipage}
 
+
+\newpage
 \subsection{Success Rate Analysis} \label{subsec:SuccessRateAnalysis}
 
 To evaluate model performance, this section analyzes the proportion of simulation scenarios that satisfy the five quality criteria defined in Section~\ref{subsec:SimulationQualityCriteria}. Each scenario corresponds to a unique configuration of model parameters, and is simulated using 100{,}000 Monte Carlo paths to generate the asset price dynamics required for option pricing. A scenario is considered successful if all five criteria are met.
